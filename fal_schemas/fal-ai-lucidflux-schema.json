@@ -1,0 +1,387 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Queue OpenAPI for fal-ai/lucidflux",
+    "version": "1.0.0",
+    "description": "The OpenAPI schema for the fal-ai/lucidflux queue.",
+    "x-fal-metadata": {
+      "endpointId": "fal-ai/lucidflux",
+      "category": "image-to-image",
+      "thumbnailUrl": "https://v3.fal.media/files/koala/IoOnMLFUyTCBXNJfw8p6d_04001a3f68e34de687b6de1a73d7e1de.jpg",
+      "playgroundUrl": "https://fal.ai/models/fal-ai/lucidflux",
+      "documentationUrl": "https://fal.ai/models/fal-ai/lucidflux/api"
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Fal Key"
+      }
+    },
+    "schemas": {
+      "QueueStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "IN_QUEUE",
+              "IN_PROGRESS",
+              "COMPLETED"
+            ]
+          },
+          "request_id": {
+            "type": "string",
+            "description": "The request id."
+          },
+          "response_url": {
+            "type": "string",
+            "description": "The response url."
+          },
+          "status_url": {
+            "type": "string",
+            "description": "The status url."
+          },
+          "cancel_url": {
+            "type": "string",
+            "description": "The cancel url."
+          },
+          "logs": {
+            "type": "object",
+            "description": "The logs.",
+            "additionalProperties": true
+          },
+          "metrics": {
+            "type": "object",
+            "description": "The metrics.",
+            "additionalProperties": true
+          },
+          "queue_position": {
+            "type": "integer",
+            "description": "The queue position."
+          }
+        },
+        "required": [
+          "status",
+          "request_id"
+        ]
+      },
+      "LucidfluxInput": {
+        "title": "LucidFluxRequest",
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "examples": [
+              "restore this image into high-quality, clean, high-resolution result"
+            ],
+            "title": "Prompt",
+            "type": "string",
+            "description": "The prompt to edit the image."
+          },
+          "guidance": {
+            "minimum": 1,
+            "maximum": 30,
+            "type": "number",
+            "description": "The guidance to use for the diffusion process.",
+            "title": "Guidance",
+            "default": 4
+          },
+          "target_height": {
+            "minimum": 512,
+            "maximum": 1024,
+            "type": "integer",
+            "description": "The height of the output image.",
+            "title": "Target Height",
+            "default": 1024
+          },
+          "image_url": {
+            "examples": [
+              "https://v3.fal.media/files/elephant/6FLKRWYztzOKDKV-v1VfK_3.png"
+            ],
+            "title": "Image URL",
+            "type": "string",
+            "description": "The URL of the image to edit."
+          },
+          "target_width": {
+            "minimum": 512,
+            "maximum": 1024,
+            "type": "integer",
+            "description": "The width of the output image.",
+            "title": "Target Width",
+            "default": 1024
+          },
+          "num_inference_steps": {
+            "minimum": 2,
+            "maximum": 50,
+            "type": "integer",
+            "description": "Number of inference steps for sampling. Higher values give better quality but take longer.",
+            "title": "Num Inference Steps",
+            "default": 50
+          },
+          "seed": {
+            "title": "Seed",
+            "type": "integer",
+            "description": "Seed used for random number generation",
+            "default": 42
+          }
+        },
+        "x-fal-order-properties": [
+          "image_url",
+          "prompt",
+          "target_width",
+          "target_height",
+          "num_inference_steps",
+          "guidance",
+          "seed"
+        ],
+        "required": [
+          "image_url",
+          "prompt"
+        ]
+      },
+      "LucidfluxOutput": {
+        "title": "LucidFluxResponse",
+        "type": "object",
+        "properties": {
+          "image": {
+            "examples": [
+              {
+                "file_size": 123744,
+                "file_name": "img_result.jpeg",
+                "content_type": "application/octet-stream",
+                "url": "https://v3b.fal.media/files/b/penguin/z34N19Fw1HIcAfmmrK8El_img_result.jpeg"
+              }
+            ],
+            "title": "Image",
+            "description": "Generated image",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Image"
+              }
+            ]
+          },
+          "seed": {
+            "title": "Seed",
+            "type": "integer",
+            "description": "Seed used for random number generation"
+          }
+        },
+        "x-fal-order-properties": [
+          "image",
+          "seed"
+        ],
+        "required": [
+          "image",
+          "seed"
+        ]
+      },
+      "Image": {
+        "description": "Represents an image file.",
+        "type": "object",
+        "x-fal-order-properties": [
+          "url",
+          "content_type",
+          "file_name",
+          "file_size",
+          "file_data",
+          "width",
+          "height"
+        ],
+        "title": "Image",
+        "properties": {
+          "height": {
+            "examples": [
+              1024
+            ],
+            "title": "Height",
+            "type": "integer",
+            "description": "The height of the image in pixels."
+          },
+          "file_size": {
+            "examples": [
+              4404019
+            ],
+            "title": "File Size",
+            "type": "integer",
+            "description": "The size of the file in bytes."
+          },
+          "url": {
+            "title": "Url",
+            "type": "string",
+            "description": "The URL where the file can be downloaded from."
+          },
+          "width": {
+            "examples": [
+              1024
+            ],
+            "title": "Width",
+            "type": "integer",
+            "description": "The width of the image in pixels."
+          },
+          "file_name": {
+            "examples": [
+              "z9RV14K95DvU.png"
+            ],
+            "title": "File Name",
+            "type": "string",
+            "description": "The name of the file. It will be auto-generated if not provided."
+          },
+          "content_type": {
+            "examples": [
+              "image/png"
+            ],
+            "title": "Content Type",
+            "type": "string",
+            "description": "The mime type of the file."
+          },
+          "file_data": {
+            "format": "binary",
+            "title": "File Data",
+            "type": "string",
+            "description": "File data"
+          }
+        },
+        "required": [
+          "url"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/fal-ai/lucidflux/requests/{request_id}/status": {
+      "get": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          },
+          {
+            "name": "logs",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "description": "Whether to include logs (`1`) in the response or not (`0`)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/lucidflux/requests/{request_id}/cancel": {
+      "put": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was cancelled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the request was cancelled successfully."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/lucidflux": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LucidfluxInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/lucidflux/requests/{request_id}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Result of the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LucidfluxOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://queue.fal.run"
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ]
+}

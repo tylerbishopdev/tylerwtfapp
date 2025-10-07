@@ -1,0 +1,492 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Queue OpenAPI for fal-ai/hyper3d/rodin/v2",
+    "version": "1.0.0",
+    "description": "The OpenAPI schema for the fal-ai/hyper3d/rodin/v2 queue.",
+    "x-fal-metadata": {
+      "endpointId": "fal-ai/hyper3d/rodin/v2",
+      "category": "image-to-3d",
+      "thumbnailUrl": "https://v3.fal.media/files/lion/liLB7F5DWmR3CgbqjvZo3_2a3d75c59b5f4951810452fa8c27d0ba.jpg",
+      "playgroundUrl": "https://fal.ai/models/fal-ai/hyper3d/rodin/v2",
+      "documentationUrl": "https://fal.ai/models/fal-ai/hyper3d/rodin/v2/api"
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Fal Key"
+      }
+    },
+    "schemas": {
+      "QueueStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "IN_QUEUE",
+              "IN_PROGRESS",
+              "COMPLETED"
+            ]
+          },
+          "request_id": {
+            "type": "string",
+            "description": "The request id."
+          },
+          "response_url": {
+            "type": "string",
+            "description": "The response url."
+          },
+          "status_url": {
+            "type": "string",
+            "description": "The status url."
+          },
+          "cancel_url": {
+            "type": "string",
+            "description": "The cancel url."
+          },
+          "logs": {
+            "type": "object",
+            "description": "The logs.",
+            "additionalProperties": true
+          },
+          "metrics": {
+            "type": "object",
+            "description": "The metrics.",
+            "additionalProperties": true
+          },
+          "queue_position": {
+            "type": "integer",
+            "description": "The queue position."
+          }
+        },
+        "required": [
+          "status",
+          "request_id"
+        ]
+      },
+      "Hyper3dRodinV2Input": {
+        "title": "RodinGen2Input",
+        "type": "object",
+        "properties": {
+          "quality_mesh_option": {
+            "enum": [
+              "4K Quad",
+              "8K Quad",
+              "18K Quad",
+              "50K Quad",
+              "2K Triangle",
+              "20K Triangle",
+              "150K Triangle",
+              "500K Triangle"
+            ],
+            "title": "Quality Mesh Option",
+            "type": "string",
+            "description": "Combined quality and mesh type selection. Quad = smooth surfaces, Triangle = detailed geometry.",
+            "default": "500K Triangle"
+          },
+          "prompt": {
+            "examples": [
+              "A futuristic robot with sleek metallic design."
+            ],
+            "title": "Prompt",
+            "type": "string",
+            "description": "A textual prompt to guide model generation. Optional for Image-to-3D mode - if empty, AI will generate a prompt based on your images.",
+            "default": ""
+          },
+          "preview_render": {
+            "title": "Preview Render",
+            "type": "boolean",
+            "description": "Generate a preview render image of the 3D model along with the model files.",
+            "default": false
+          },
+          "bbox_condition": {
+            "title": "Bbox Condition",
+            "type": "array",
+            "description": "An array that specifies the bounding box dimensions [width, height, length].",
+            "example": [
+              100,
+              50,
+              150
+            ],
+            "items": {
+              "type": "integer"
+            }
+          },
+          "input_image_urls": {
+            "examples": [
+              [
+                "https://v3.fal.media/files/panda/l7mQrG8plbB42lBNqVjm0_image.png",
+                "https://v3b.fal.media/files/b/kangaroo/scq50Bf1PB2NZOW8szphV_image.png",
+                "https://v3.fal.media/files/penguin/X21qtlVMazAtljzRCJD2__image.png"
+              ]
+            ],
+            "title": "Input Image Urls",
+            "type": "array",
+            "description": "URL of images to use while generating the 3D model. Required for Image-to-3D mode. Up to 5 images allowed.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "TAPose": {
+            "title": "T/A Pose",
+            "type": "boolean",
+            "description": "Generate characters in T-pose or A-pose format, making them easier to rig and animate in 3D software.",
+            "default": false
+          },
+          "use_original_alpha": {
+            "title": "Use Original Alpha",
+            "type": "boolean",
+            "description": "When enabled, preserves the transparency channel from input images during 3D generation.",
+            "default": false
+          },
+          "geometry_file_format": {
+            "enum": [
+              "glb",
+              "usdz",
+              "fbx",
+              "obj",
+              "stl"
+            ],
+            "title": "Geometry File Format",
+            "type": "string",
+            "description": "Format of the geometry file. Possible values: glb, usdz, fbx, obj, stl. Default is glb.",
+            "default": "glb"
+          },
+          "seed": {
+            "minimum": 0,
+            "title": "Seed",
+            "type": "integer",
+            "description": "Seed value for randomization, ranging from 0 to 65535. Optional.",
+            "maximum": 65535
+          },
+          "material": {
+            "enum": [
+              "PBR",
+              "Shaded",
+              "All"
+            ],
+            "title": "Material",
+            "type": "string",
+            "description": "Material type. PBR: Physically-based materials with realistic lighting. Shaded: Simple materials with baked lighting. All: Both types included.",
+            "default": "All"
+          }
+        },
+        "x-fal-order-properties": [
+          "prompt",
+          "input_image_urls",
+          "use_original_alpha",
+          "seed",
+          "geometry_file_format",
+          "material",
+          "quality_mesh_option",
+          "TAPose",
+          "bbox_condition",
+          "preview_render"
+        ]
+      },
+      "Hyper3dRodinV2Output": {
+        "title": "ObjectOutputv2",
+        "type": "object",
+        "properties": {
+          "seed": {
+            "title": "Seed",
+            "type": "integer",
+            "description": "Seed value used for generation."
+          },
+          "textures": {
+            "title": "Textures",
+            "type": "array",
+            "description": "Generated textures for the 3D object.",
+            "items": {
+              "$ref": "#/components/schemas/Image"
+            }
+          },
+          "model_mesh": {
+            "examples": [
+              {
+                "url": "https://storage.googleapis.com/falserverless/model_tests/video_models/base_basic_shaded.glb"
+              }
+            ],
+            "title": "Model Mesh",
+            "description": "Generated 3D object file.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/File"
+              }
+            ]
+          }
+        },
+        "x-fal-order-properties": [
+          "model_mesh",
+          "seed",
+          "textures"
+        ],
+        "required": [
+          "model_mesh",
+          "seed",
+          "textures"
+        ]
+      },
+      "Image": {
+        "description": "Represents an image file.",
+        "type": "object",
+        "x-fal-order-properties": [
+          "url",
+          "content_type",
+          "file_name",
+          "file_size",
+          "file_data",
+          "width",
+          "height"
+        ],
+        "title": "Image",
+        "properties": {
+          "height": {
+            "examples": [
+              1024
+            ],
+            "title": "Height",
+            "type": "integer",
+            "description": "The height of the image in pixels."
+          },
+          "file_size": {
+            "examples": [
+              4404019
+            ],
+            "title": "File Size",
+            "type": "integer",
+            "description": "The size of the file in bytes."
+          },
+          "url": {
+            "title": "Url",
+            "type": "string",
+            "description": "The URL where the file can be downloaded from."
+          },
+          "width": {
+            "examples": [
+              1024
+            ],
+            "title": "Width",
+            "type": "integer",
+            "description": "The width of the image in pixels."
+          },
+          "file_name": {
+            "examples": [
+              "z9RV14K95DvU.png"
+            ],
+            "title": "File Name",
+            "type": "string",
+            "description": "The name of the file. It will be auto-generated if not provided."
+          },
+          "content_type": {
+            "examples": [
+              "image/png"
+            ],
+            "title": "Content Type",
+            "type": "string",
+            "description": "The mime type of the file."
+          },
+          "file_data": {
+            "format": "binary",
+            "title": "File Data",
+            "type": "string",
+            "description": "File data"
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "File": {
+        "title": "File",
+        "type": "object",
+        "properties": {
+          "file_size": {
+            "examples": [
+              4404019
+            ],
+            "title": "File Size",
+            "type": "integer",
+            "description": "The size of the file in bytes."
+          },
+          "file_name": {
+            "examples": [
+              "z9RV14K95DvU.png"
+            ],
+            "title": "File Name",
+            "type": "string",
+            "description": "The name of the file. It will be auto-generated if not provided."
+          },
+          "content_type": {
+            "examples": [
+              "image/png"
+            ],
+            "title": "Content Type",
+            "type": "string",
+            "description": "The mime type of the file."
+          },
+          "url": {
+            "title": "Url",
+            "type": "string",
+            "description": "The URL where the file can be downloaded from."
+          },
+          "file_data": {
+            "format": "binary",
+            "title": "File Data",
+            "type": "string",
+            "description": "File data"
+          }
+        },
+        "x-fal-order-properties": [
+          "url",
+          "content_type",
+          "file_name",
+          "file_size",
+          "file_data"
+        ],
+        "required": [
+          "url"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/fal-ai/hyper3d/rodin/v2/requests/{request_id}/status": {
+      "get": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          },
+          {
+            "name": "logs",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "description": "Whether to include logs (`1`) in the response or not (`0`)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/hyper3d/rodin/v2/requests/{request_id}/cancel": {
+      "put": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was cancelled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the request was cancelled successfully."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/hyper3d/rodin/v2": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hyper3dRodinV2Input"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/hyper3d/rodin/v2/requests/{request_id}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Result of the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hyper3dRodinV2Output"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://queue.fal.run"
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ]
+}

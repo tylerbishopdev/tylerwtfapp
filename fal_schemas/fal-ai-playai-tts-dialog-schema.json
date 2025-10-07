@@ -1,0 +1,443 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Queue OpenAPI for fal-ai/playai/tts/dialog",
+    "version": "1.0.0",
+    "description": "The OpenAPI schema for the fal-ai/playai/tts/dialog queue.",
+    "x-fal-metadata": {
+      "endpointId": "fal-ai/playai/tts/dialog",
+      "category": "text-to-audio",
+      "thumbnailUrl": "https://storage.googleapis.com/fal_cdn/fal/Training-1.jpg",
+      "playgroundUrl": "https://fal.ai/models/fal-ai/playai/tts/dialog",
+      "documentationUrl": "https://fal.ai/models/fal-ai/playai/tts/dialog/api"
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Fal Key"
+      }
+    },
+    "schemas": {
+      "QueueStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "IN_QUEUE",
+              "IN_PROGRESS",
+              "COMPLETED"
+            ]
+          },
+          "request_id": {
+            "type": "string",
+            "description": "The request id."
+          },
+          "response_url": {
+            "type": "string",
+            "description": "The response url."
+          },
+          "status_url": {
+            "type": "string",
+            "description": "The status url."
+          },
+          "cancel_url": {
+            "type": "string",
+            "description": "The cancel url."
+          },
+          "logs": {
+            "type": "object",
+            "description": "The logs.",
+            "additionalProperties": true
+          },
+          "metrics": {
+            "type": "object",
+            "description": "The metrics.",
+            "additionalProperties": true
+          },
+          "queue_position": {
+            "type": "integer",
+            "description": "The queue position."
+          }
+        },
+        "required": [
+          "status",
+          "request_id"
+        ]
+      },
+      "PlayaiTtsDialogInput": {
+        "title": "LDMTTSInput",
+        "type": "object",
+        "properties": {
+          "response_format": {
+            "enum": [
+              "url",
+              "bytes"
+            ],
+            "title": "Response Format",
+            "type": "string",
+            "description": "The format of the response.",
+            "default": "url"
+          },
+          "input": {
+            "examples": [
+              "Speaker 1: Hey, did you catch the game last night?\nSpeaker 2: Of course! What a match—it had me on the edge of my seat.\nSpeaker 1: Same here! That last-minute goal was unreal. Who's your MVP?\nSpeaker 2: Gotta be the goalie. Those saves were unbelievable.\nSpeaker 1: Absolutely. Saved the day, literally! Are you planning to watch the next game?\nSpeaker 2: Oh, you bet. I’m already stocked up on snacks!\n"
+            ],
+            "title": "Input",
+            "minLength": 1,
+            "description": "The dialogue text with turn prefixes to distinguish speakers.",
+            "type": "string"
+          },
+          "seed": {
+            "minimum": 0,
+            "description": "An integer number greater than or equal to 0. If equal to null or not provided, a random seed will be used. Useful to control the reproducibility of the generated audio. Assuming all other properties didn't change, a fixed seed should always generate the exact same audio file.",
+            "type": "integer",
+            "title": "Seed",
+            "examples": [
+              null
+            ]
+          },
+          "voices": {
+            "description": "A list of voice definitions for each speaker in the dialogue. Must be between 1 and 2 voices.",
+            "type": "array",
+            "title": "Voices",
+            "items": {
+              "$ref": "#/components/schemas/LDMVoiceInput"
+            },
+            "default": [
+              {
+                "voice": "Jennifer (English (US)/American)",
+                "turn_prefix": "Speaker 1: "
+              },
+              {
+                "voice": "Furio (English (IT)/Italian)",
+                "turn_prefix": "Speaker 2: "
+              }
+            ]
+          }
+        },
+        "x-fal-order-properties": [
+          "input",
+          "voices",
+          "response_format",
+          "seed"
+        ],
+        "required": [
+          "input"
+        ]
+      },
+      "PlayaiTtsDialogOutput": {
+        "title": "LDMTTSOutput",
+        "type": "object",
+        "properties": {
+          "audio": {
+            "examples": [
+              {
+                "file_size": 584109,
+                "duration": 24.3,
+                "file_name": "33dd5f07-f834-4080-aaac-4a253ce1660b.mp3",
+                "content_type": "audio/mpeg",
+                "url": "https://fal-api-audio-uploads.s3.amazonaws.com/33dd5f07-f834-4080-aaac-4a253ce1660b.mp3"
+              }
+            ],
+            "title": "Audio",
+            "description": "The generated audio file.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AudioFile"
+              }
+            ]
+          }
+        },
+        "x-fal-order-properties": [
+          "audio"
+        ],
+        "required": [
+          "audio"
+        ]
+      },
+      "LDMVoiceInput": {
+        "title": "LDMVoiceInput",
+        "type": "object",
+        "properties": {
+          "voice": {
+            "examples": [
+              "Jennifer (English (US)/American)",
+              "Dexter (English (US)/American)",
+              "Ava (English (AU)/Australian)",
+              "Tilly (English (AU)/Australian)",
+              "Charlotte (Advertising) (English (CA)/Canadian)",
+              "Charlotte (Meditation) (English (CA)/Canadian)",
+              "Cecil (English (GB)/British)",
+              "Sterling (English (GB)/British)",
+              "Cillian (English (IE)/Irish)",
+              "Madison (English (IE)/Irish)",
+              "Ada (English (ZA)/South african)",
+              "Furio (English (IT)/Italian)",
+              "Alessandro (English (IT)/Italian)",
+              "Carmen (English (MX)/Mexican)",
+              "Sumita (English (IN)/Indian)",
+              "Navya (English (IN)/Indian)",
+              "Baptiste (English (FR)/French)",
+              "Lumi (English (FI)/Finnish)",
+              "Ronel Conversational (Afrikaans/South african)",
+              "Ronel Narrative (Afrikaans/South african)",
+              "Abdo Conversational (Arabic/Arabic)",
+              "Abdo Narrative (Arabic/Arabic)",
+              "Mousmi Conversational (Bengali/Bengali)",
+              "Mousmi Narrative (Bengali/Bengali)",
+              "Caroline Conversational (Portuguese (BR)/Brazilian)",
+              "Caroline Narrative (Portuguese (BR)/Brazilian)",
+              "Ange Conversational (French/French)",
+              "Ange Narrative (French/French)",
+              "Anke Conversational (German/German)",
+              "Anke Narrative (German/German)",
+              "Bora Conversational (Greek/Greek)",
+              "Bora Narrative (Greek/Greek)",
+              "Anuj Conversational (Hindi/Indian)",
+              "Anuj Narrative (Hindi/Indian)",
+              "Alessandro Conversational (Italian/Italian)",
+              "Alessandro Narrative (Italian/Italian)",
+              "Kiriko Conversational (Japanese/Japanese)",
+              "Kiriko Narrative (Japanese/Japanese)",
+              "Dohee Conversational (Korean/Korean)",
+              "Dohee Narrative (Korean/Korean)",
+              "Ignatius Conversational (Malay/Malay)",
+              "Ignatius Narrative (Malay/Malay)",
+              "Adam Conversational (Polish/Polish)",
+              "Adam Narrative (Polish/Polish)",
+              "Andrei Conversational (Russian/Russian)",
+              "Andrei Narrative (Russian/Russian)",
+              "Aleksa Conversational (Serbian/Serbian)",
+              "Aleksa Narrative (Serbian/Serbian)",
+              "Carmen Conversational (Spanish/Spanish)",
+              "Patricia Conversational (Spanish/Spanish)",
+              "Aiken Conversational (Tagalog/Filipino)",
+              "Aiken Narrative (Tagalog/Filipino)",
+              "Katbundit Conversational (Thai/Thai)",
+              "Katbundit Narrative (Thai/Thai)",
+              "Ali Conversational (Turkish/Turkish)",
+              "Ali Narrative (Turkish/Turkish)",
+              "Sahil Conversational (Urdu/Pakistani)",
+              "Sahil Narrative (Urdu/Pakistani)",
+              "Mary Conversational (Hebrew/Israeli)",
+              "Mary Narrative (Hebrew/Israeli)"
+            ],
+            "title": "Voice",
+            "type": "string",
+            "description": "The unique ID of a PlayHT or Cloned Voice, or a name from the available presets."
+          },
+          "turn_prefix": {
+            "title": "Turn Prefix",
+            "type": "string",
+            "description": "A prefix to identify the speaker in multi-turn dialogues.",
+            "default": "Speaker 1: "
+          }
+        },
+        "x-fal-order-properties": [
+          "voice",
+          "turn_prefix"
+        ],
+        "required": [
+          "voice"
+        ]
+      },
+      "AudioFile": {
+        "title": "AudioFile",
+        "type": "object",
+        "properties": {
+          "file_size": {
+            "examples": [
+              4404019
+            ],
+            "title": "File Size",
+            "type": "integer",
+            "description": "The size of the file in bytes."
+          },
+          "duration": {
+            "title": "Duration",
+            "type": "number",
+            "description": "The duration of the audio file in seconds."
+          },
+          "file_name": {
+            "examples": [
+              "z9RV14K95DvU.png"
+            ],
+            "title": "File Name",
+            "type": "string",
+            "description": "The name of the file. It will be auto-generated if not provided."
+          },
+          "content_type": {
+            "examples": [
+              "image/png"
+            ],
+            "title": "Content Type",
+            "type": "string",
+            "description": "The mime type of the file."
+          },
+          "url": {
+            "title": "Url",
+            "type": "string",
+            "description": "The URL where the file can be downloaded from."
+          },
+          "file_data": {
+            "format": "binary",
+            "title": "File Data",
+            "type": "string",
+            "description": "File data"
+          }
+        },
+        "x-fal-order-properties": [
+          "url",
+          "content_type",
+          "file_name",
+          "file_size",
+          "file_data",
+          "duration"
+        ],
+        "required": [
+          "url",
+          "duration"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/fal-ai/playai/tts/dialog/requests/{request_id}/status": {
+      "get": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          },
+          {
+            "name": "logs",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "description": "Whether to include logs (`1`) in the response or not (`0`)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/playai/tts/dialog/requests/{request_id}/cancel": {
+      "put": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was cancelled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the request was cancelled successfully."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/playai/tts/dialog": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlayaiTtsDialogInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/playai/tts/dialog/requests/{request_id}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Result of the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayaiTtsDialogOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://queue.fal.run"
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ]
+}

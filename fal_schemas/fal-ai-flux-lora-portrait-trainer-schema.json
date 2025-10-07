@@ -1,0 +1,383 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Queue OpenAPI for fal-ai/flux-lora-portrait-trainer",
+    "version": "1.0.0",
+    "description": "The OpenAPI schema for the fal-ai/flux-lora-portrait-trainer queue.",
+    "x-fal-metadata": {
+      "endpointId": "fal-ai/flux-lora-portrait-trainer",
+      "category": "training",
+      "thumbnailUrl": "https://fal.media/files/rabbit/kh3cW2FXV5m3jigGYxcVU_3657df3e2e324e628af565129148736d.jpg",
+      "playgroundUrl": "https://fal.ai/models/fal-ai/flux-lora-portrait-trainer",
+      "documentationUrl": "https://fal.ai/models/fal-ai/flux-lora-portrait-trainer/api"
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Fal Key"
+      }
+    },
+    "schemas": {
+      "QueueStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "IN_QUEUE",
+              "IN_PROGRESS",
+              "COMPLETED"
+            ]
+          },
+          "request_id": {
+            "type": "string",
+            "description": "The request id."
+          },
+          "response_url": {
+            "type": "string",
+            "description": "The response url."
+          },
+          "status_url": {
+            "type": "string",
+            "description": "The status url."
+          },
+          "cancel_url": {
+            "type": "string",
+            "description": "The cancel url."
+          },
+          "logs": {
+            "type": "object",
+            "description": "The logs.",
+            "additionalProperties": true
+          },
+          "metrics": {
+            "type": "object",
+            "description": "The metrics.",
+            "additionalProperties": true
+          },
+          "queue_position": {
+            "type": "integer",
+            "description": "The queue position."
+          }
+        },
+        "required": [
+          "status",
+          "request_id"
+        ]
+      },
+      "FluxLoraPortraitTrainerInput": {
+        "title": "PublicInput",
+        "type": "object",
+        "properties": {
+          "images_data_url": {
+            "title": "Images Data Url",
+            "type": "string",
+            "description": "\n        URL to zip archive with images of a consistent style. Try to use at least 10 images, although more is better.\n\n        In addition to images the archive can contain text files with captions. Each text file should have the same name as the image file it corresponds to.\n\n        The captions can include a special string `[trigger]`. If a trigger_word is specified, it will replace `[trigger]` in the captions.\n    "
+          },
+          "trigger_phrase": {
+            "title": "Trigger Phrase",
+            "type": "string",
+            "description": "Trigger phrase to be used in the captions. If None, a trigger word will not be used.\n        If no captions are provide the trigger_work will be used instead of captions. If captions are provided, the trigger word will replace the `[trigger]` string in the captions.\n        ",
+            "nullable": true
+          },
+          "resume_from_checkpoint": {
+            "title": "Resume From Checkpoint",
+            "type": "string",
+            "description": "URL to a checkpoint to resume training from.",
+            "default": ""
+          },
+          "learning_rate": {
+            "description": "Learning rate to use for training.",
+            "type": "number",
+            "minimum": 1e-06,
+            "maximum": 0.001,
+            "examples": [
+              0.0002
+            ],
+            "title": "Learning Rate",
+            "default": 9e-05
+          },
+          "subject_crop": {
+            "examples": [
+              true
+            ],
+            "title": "Subject Crop",
+            "type": "boolean",
+            "description": "If True, the subject will be cropped from the image.",
+            "default": true
+          },
+          "multiresolution_training": {
+            "examples": [
+              true
+            ],
+            "title": "Multiresolution Training",
+            "type": "boolean",
+            "description": "If True, multiresolution training will be used.",
+            "default": true
+          },
+          "steps": {
+            "description": "Number of steps to train the LoRA on.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000,
+            "title": "Steps",
+            "examples": [
+              1000
+            ],
+            "default": 2500
+          },
+          "data_archive_format": {
+            "title": "Data Archive Format",
+            "type": "string",
+            "description": "The format of the archive. If not specified, the format will be inferred from the URL.",
+            "nullable": true
+          },
+          "create_masks": {
+            "examples": [
+              false
+            ],
+            "title": "Create Masks",
+            "type": "boolean",
+            "description": "If True, masks will be created for the subject.",
+            "default": false
+          }
+        },
+        "x-fal-order-properties": [
+          "images_data_url",
+          "trigger_phrase",
+          "learning_rate",
+          "steps",
+          "multiresolution_training",
+          "subject_crop",
+          "data_archive_format",
+          "resume_from_checkpoint",
+          "create_masks"
+        ],
+        "required": [
+          "images_data_url"
+        ]
+      },
+      "FluxLoraPortraitTrainerOutput": {
+        "title": "Output",
+        "type": "object",
+        "properties": {
+          "config_file": {
+            "title": "Config File",
+            "description": "URL to the training configuration file.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/File"
+              }
+            ]
+          },
+          "diffusers_lora_file": {
+            "title": "Diffusers Lora File",
+            "description": "URL to the trained diffusers lora weights.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/File"
+              }
+            ]
+          }
+        },
+        "x-fal-order-properties": [
+          "diffusers_lora_file",
+          "config_file"
+        ],
+        "required": [
+          "diffusers_lora_file",
+          "config_file"
+        ]
+      },
+      "File": {
+        "title": "File",
+        "type": "object",
+        "properties": {
+          "file_size": {
+            "examples": [
+              4404019
+            ],
+            "title": "File Size",
+            "type": "integer",
+            "description": "The size of the file in bytes."
+          },
+          "file_name": {
+            "examples": [
+              "z9RV14K95DvU.png"
+            ],
+            "title": "File Name",
+            "type": "string",
+            "description": "The name of the file. It will be auto-generated if not provided."
+          },
+          "content_type": {
+            "examples": [
+              "image/png"
+            ],
+            "title": "Content Type",
+            "type": "string",
+            "description": "The mime type of the file."
+          },
+          "url": {
+            "title": "Url",
+            "type": "string",
+            "description": "The URL where the file can be downloaded from."
+          },
+          "file_data": {
+            "format": "binary",
+            "title": "File Data",
+            "type": "string",
+            "description": "File data"
+          }
+        },
+        "x-fal-order-properties": [
+          "url",
+          "content_type",
+          "file_name",
+          "file_size",
+          "file_data"
+        ],
+        "required": [
+          "url"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/fal-ai/flux-lora-portrait-trainer/requests/{request_id}/status": {
+      "get": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          },
+          {
+            "name": "logs",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "description": "Whether to include logs (`1`) in the response or not (`0`)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/flux-lora-portrait-trainer/requests/{request_id}/cancel": {
+      "put": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was cancelled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the request was cancelled successfully."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/flux-lora-portrait-trainer": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FluxLoraPortraitTrainerInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/flux-lora-portrait-trainer/requests/{request_id}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Result of the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FluxLoraPortraitTrainerOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://queue.fal.run"
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ]
+}

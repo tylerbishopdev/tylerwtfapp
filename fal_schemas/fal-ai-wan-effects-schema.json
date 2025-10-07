@@ -1,0 +1,439 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Queue OpenAPI for fal-ai/wan-effects",
+    "version": "1.0.0",
+    "description": "The OpenAPI schema for the fal-ai/wan-effects queue.",
+    "x-fal-metadata": {
+      "endpointId": "fal-ai/wan-effects",
+      "category": "image-to-video",
+      "thumbnailUrl": "https://storage.googleapis.com/fal_cdn/Fal_Visuals_V1_012.jpg",
+      "playgroundUrl": "https://fal.ai/models/fal-ai/wan-effects",
+      "documentationUrl": "https://fal.ai/models/fal-ai/wan-effects/api"
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Fal Key"
+      }
+    },
+    "schemas": {
+      "QueueStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "IN_QUEUE",
+              "IN_PROGRESS",
+              "COMPLETED"
+            ]
+          },
+          "request_id": {
+            "type": "string",
+            "description": "The request id."
+          },
+          "response_url": {
+            "type": "string",
+            "description": "The response url."
+          },
+          "status_url": {
+            "type": "string",
+            "description": "The status url."
+          },
+          "cancel_url": {
+            "type": "string",
+            "description": "The cancel url."
+          },
+          "logs": {
+            "type": "object",
+            "description": "The logs.",
+            "additionalProperties": true
+          },
+          "metrics": {
+            "type": "object",
+            "description": "The metrics.",
+            "additionalProperties": true
+          },
+          "queue_position": {
+            "type": "integer",
+            "description": "The queue position."
+          }
+        },
+        "required": [
+          "status",
+          "request_id"
+        ]
+      },
+      "WanEffectsInput": {
+        "x-fal-order-properties": [
+          "subject",
+          "image_url",
+          "effect_type",
+          "num_frames",
+          "frames_per_second",
+          "seed",
+          "aspect_ratio",
+          "num_inference_steps",
+          "lora_scale",
+          "turbo_mode"
+        ],
+        "type": "object",
+        "properties": {
+          "effect_type": {
+            "enum": [
+              "squish",
+              "muscle",
+              "inflate",
+              "crush",
+              "rotate",
+              "gun-shooting",
+              "deflate",
+              "cakeify",
+              "hulk",
+              "baby",
+              "bride",
+              "classy",
+              "puppy",
+              "snow-white",
+              "disney-princess",
+              "mona-lisa",
+              "painting",
+              "pirate-captain",
+              "princess",
+              "jungle",
+              "samurai",
+              "vip",
+              "warrior",
+              "zen",
+              "assassin",
+              "timelapse",
+              "tsunami",
+              "fire",
+              "zoom-call",
+              "doom-fps",
+              "fus-ro-dah",
+              "hug-jesus",
+              "robot-face-reveal",
+              "super-saiyan",
+              "jumpscare",
+              "laughing",
+              "cartoon-jaw-drop",
+              "crying",
+              "kissing",
+              "angry-face",
+              "selfie-younger-self",
+              "animeify",
+              "blast"
+            ],
+            "description": "The type of effect to apply to the video.",
+            "type": "string",
+            "title": "Effect Type",
+            "default": "cakeify"
+          },
+          "aspect_ratio": {
+            "enum": [
+              "16:9",
+              "9:16",
+              "1:1"
+            ],
+            "title": "Aspect Ratio",
+            "type": "string",
+            "description": "Aspect ratio of the output video.",
+            "default": "16:9"
+          },
+          "subject": {
+            "examples": [
+              "a cute kitten",
+              "Donald Trump",
+              "a tank",
+              "a ceramic vase"
+            ],
+            "description": "The subject to insert into the predefined prompt template for the selected effect.",
+            "type": "string",
+            "title": "Subject"
+          },
+          "lora_scale": {
+            "minimum": 0.1,
+            "maximum": 2,
+            "type": "number",
+            "title": "Lora Scale",
+            "description": "The scale of the LoRA weight. Used to adjust effect intensity.",
+            "default": 1
+          },
+          "image_url": {
+            "examples": [
+              "https://storage.googleapis.com/falserverless/web-examples/wan-effects/cat.jpg",
+              "https://storage.googleapis.com/falserverless/web-examples/wan-effects/man_1.png",
+              "https://storage.googleapis.com/falserverless/web-examples/wan-effects/woman_2.png"
+            ],
+            "description": "URL of the input image.",
+            "type": "string",
+            "title": "Image URL"
+          },
+          "turbo_mode": {
+            "description": "Whether to use turbo mode. If True, the video will be generated faster but with lower quality.",
+            "type": "boolean",
+            "title": "Turbo Mode",
+            "default": false
+          },
+          "frames_per_second": {
+            "minimum": 5,
+            "description": "Frames per second of the generated video.",
+            "type": "integer",
+            "maximum": 24,
+            "title": "Frames Per Second",
+            "default": 16
+          },
+          "num_inference_steps": {
+            "minimum": 2,
+            "title": "Num Inference Steps",
+            "type": "integer",
+            "maximum": 40,
+            "description": "Number of inference steps for sampling. Higher values give better quality but take longer.",
+            "default": 30
+          },
+          "seed": {
+            "description": "Random seed for reproducibility. If None, a random seed is chosen.",
+            "type": "integer",
+            "title": "Seed"
+          },
+          "num_frames": {
+            "minimum": 81,
+            "title": "Num Frames",
+            "type": "integer",
+            "maximum": 100,
+            "description": "Number of frames to generate.",
+            "default": 81
+          }
+        },
+        "title": "BaseInput",
+        "required": [
+          "subject",
+          "image_url"
+        ]
+      },
+      "WanEffectsOutput": {
+        "x-fal-order-properties": [
+          "video",
+          "seed"
+        ],
+        "type": "object",
+        "properties": {
+          "seed": {
+            "title": "Seed",
+            "type": "integer"
+          },
+          "video": {
+            "examples": [
+              {
+                "url": "https://storage.googleapis.com/falserverless/web-examples/wan-effects/cat_video.mp4"
+              }
+            ],
+            "description": "The generated video",
+            "title": "Video",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/File"
+              }
+            ]
+          }
+        },
+        "title": "WanEffectsOutput",
+        "required": [
+          "video",
+          "seed"
+        ]
+      },
+      "File": {
+        "x-fal-order-properties": [
+          "url",
+          "content_type",
+          "file_name",
+          "file_size",
+          "file_data"
+        ],
+        "type": "object",
+        "properties": {
+          "file_size": {
+            "examples": [
+              4404019
+            ],
+            "description": "The size of the file in bytes.",
+            "type": "integer",
+            "title": "File Size"
+          },
+          "file_name": {
+            "examples": [
+              "z9RV14K95DvU.png"
+            ],
+            "description": "The name of the file. It will be auto-generated if not provided.",
+            "type": "string",
+            "title": "File Name"
+          },
+          "content_type": {
+            "examples": [
+              "image/png"
+            ],
+            "description": "The mime type of the file.",
+            "type": "string",
+            "title": "Content Type"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string",
+            "description": "The URL where the file can be downloaded from."
+          },
+          "file_data": {
+            "format": "binary",
+            "description": "File data",
+            "type": "string",
+            "title": "File Data"
+          }
+        },
+        "title": "File",
+        "required": [
+          "url"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/fal-ai/wan-effects/requests/{request_id}/status": {
+      "get": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          },
+          {
+            "name": "logs",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "description": "Whether to include logs (`1`) in the response or not (`0`)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/wan-effects/requests/{request_id}/cancel": {
+      "put": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was cancelled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the request was cancelled successfully."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/wan-effects": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WanEffectsInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/wan-effects/requests/{request_id}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Result of the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WanEffectsOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://queue.fal.run"
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ]
+}

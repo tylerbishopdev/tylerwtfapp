@@ -1,0 +1,351 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Queue OpenAPI for fal-ai/imagen4/preview/fast",
+    "version": "1.0.0",
+    "description": "The OpenAPI schema for the fal-ai/imagen4/preview/fast queue.",
+    "x-fal-metadata": {
+      "endpointId": "fal-ai/imagen4/preview/fast",
+      "category": "text-to-image",
+      "thumbnailUrl": "https://storage.googleapis.com/fal_cdn/fal/Sound-3.jpg",
+      "playgroundUrl": "https://fal.ai/models/fal-ai/imagen4/preview/fast",
+      "documentationUrl": "https://fal.ai/models/fal-ai/imagen4/preview/fast/api"
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Fal Key"
+      }
+    },
+    "schemas": {
+      "QueueStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "IN_QUEUE",
+              "IN_PROGRESS",
+              "COMPLETED"
+            ]
+          },
+          "request_id": {
+            "type": "string",
+            "description": "The request id."
+          },
+          "response_url": {
+            "type": "string",
+            "description": "The response url."
+          },
+          "status_url": {
+            "type": "string",
+            "description": "The status url."
+          },
+          "cancel_url": {
+            "type": "string",
+            "description": "The cancel url."
+          },
+          "logs": {
+            "type": "object",
+            "description": "The logs.",
+            "additionalProperties": true
+          },
+          "metrics": {
+            "type": "object",
+            "description": "The metrics.",
+            "additionalProperties": true
+          },
+          "queue_position": {
+            "type": "integer",
+            "description": "The queue position."
+          }
+        },
+        "required": [
+          "status",
+          "request_id"
+        ]
+      },
+      "Imagen4PreviewFastInput": {
+        "title": "TextToImageV4FastInput",
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "examples": [
+              "Atmospheric narrative illustration depicting a young woman with dark hair styled with a single star clip, eating dumplings at a small round table in a bustling, late-night eatery reminiscent of a vintage Hong Kong diner. The style blends clean linework with textured color fields, evoking a sense of place and story. The mood is intimate contentment amidst vibrant surroundings. Soft, warm overhead lighting from unseen hanging lamps casts gentle highlights on her face and the porcelain plate of dumplings, creating soft-edged shadows on the tiled tabletop and floor. The background features detailed elements like wall menus with stylized illustrations, a retro wall clock, steam rising from a soup bowl, and glimpses of other patrons blurred slightly for depth. The woman, viewed from a slightly high angle, crouches slightly on her chair, intensely focused on her food, rendered with expressive linework defining her pose and features. The color palette mixes muted teal wall tiles and green chairs with pops of warm yellow in her top, pink trousers, red chili oil dish, and ambient light, creating a cozy yet lively feel. Subtle paper texture or digital grain is visible throughout. Focus is sharp on the character and her immediate table setting"
+            ],
+            "title": "Prompt",
+            "type": "string",
+            "description": "The text prompt describing what you want to see"
+          },
+          "aspect_ratio": {
+            "enum": [
+              "1:1",
+              "16:9",
+              "9:16",
+              "3:4",
+              "4:3"
+            ],
+            "title": "Aspect Ratio",
+            "type": "string",
+            "description": "The aspect ratio of the generated image",
+            "default": "1:1"
+          },
+          "num_images": {
+            "minimum": 1,
+            "maximum": 4,
+            "type": "integer",
+            "title": "Num Images",
+            "description": "Number of images to generate (1-4)",
+            "default": 1
+          },
+          "seed": {
+            "title": "Seed",
+            "type": "integer",
+            "description": "Random seed for reproducible generation"
+          },
+          "negative_prompt": {
+            "title": "Negative Prompt",
+            "type": "string",
+            "description": "A description of what to discourage in the generated images",
+            "default": ""
+          }
+        },
+        "x-fal-order-properties": [
+          "prompt",
+          "negative_prompt",
+          "aspect_ratio",
+          "num_images",
+          "seed"
+        ],
+        "required": [
+          "prompt"
+        ]
+      },
+      "Imagen4PreviewFastOutput": {
+        "title": "OutputV4Fast",
+        "type": "object",
+        "properties": {
+          "images": {
+            "examples": [
+              [
+                {
+                  "url": "https://v3.fal.media/files/elephant/MNWc2sdR8v_VLWqVp7ag8_output.png"
+                }
+              ]
+            ],
+            "title": "Images",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/File"
+            }
+          },
+          "seed": {
+            "examples": [
+              42
+            ],
+            "title": "Seed",
+            "type": "integer",
+            "description": "Seed used for generation"
+          }
+        },
+        "x-fal-order-properties": [
+          "images",
+          "seed"
+        ],
+        "required": [
+          "images",
+          "seed"
+        ]
+      },
+      "File": {
+        "title": "File",
+        "type": "object",
+        "properties": {
+          "file_size": {
+            "examples": [
+              4404019
+            ],
+            "title": "File Size",
+            "type": "integer",
+            "description": "The size of the file in bytes."
+          },
+          "file_name": {
+            "examples": [
+              "z9RV14K95DvU.png"
+            ],
+            "title": "File Name",
+            "type": "string",
+            "description": "The name of the file. It will be auto-generated if not provided."
+          },
+          "content_type": {
+            "examples": [
+              "image/png"
+            ],
+            "title": "Content Type",
+            "type": "string",
+            "description": "The mime type of the file."
+          },
+          "url": {
+            "title": "Url",
+            "type": "string",
+            "description": "The URL where the file can be downloaded from."
+          },
+          "file_data": {
+            "format": "binary",
+            "title": "File Data",
+            "type": "string",
+            "description": "File data"
+          }
+        },
+        "x-fal-order-properties": [
+          "url",
+          "content_type",
+          "file_name",
+          "file_size",
+          "file_data"
+        ],
+        "required": [
+          "url"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/fal-ai/imagen4/preview/fast/requests/{request_id}/status": {
+      "get": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          },
+          {
+            "name": "logs",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "description": "Whether to include logs (`1`) in the response or not (`0`)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/imagen4/preview/fast/requests/{request_id}/cancel": {
+      "put": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was cancelled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Whether the request was cancelled successfully."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/imagen4/preview/fast": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Imagen4PreviewFastInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The request status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fal-ai/imagen4/preview/fast/requests/{request_id}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Request ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Result of the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Imagen4PreviewFastOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://queue.fal.run"
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ]
+}
