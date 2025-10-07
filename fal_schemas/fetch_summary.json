@@ -6,252 +6,198 @@
   "results": [
     {
       "model": "fal-ai/ideogram/v3",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-ideogram-v3-schema.json"
     },
     {
       "model": "fal-ai/imagen4/preview/fast",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-imagen4-preview-fast-schema.json"
     },
     {
       "model": "fal-ai/imagen4/preview",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-imagen4-preview-schema.json"
     },
     {
       "model": "fal-ai/qwen-image-edit-plus-lora",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-qwen-image-edit-plus-lora-schema.json"
     },
     {
       "model": "fal-ai/flux-pro/kontext/max/text-to-image",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-flux-pro-kontext-max-text-to-image-schema.json"
     },
     {
       "model": "fal-ai/recraft/v3/text-to-image",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-recraft-v3-text-to-image-schema.json"
     },
     {
       "model": "fal-ai/flux-lora",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-flux-lora-schema.json"
     },
     {
       "model": "fal-ai/flux-lora/image-to-image",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-flux-lora-image-to-image-schema.json"
     },
     {
       "model": "fal-ai/ideogram/character",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-ideogram-character-schema.json"
     },
     {
       "model": "fal-ai/minimax/hailuo-02/standard/image-to-video",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-minimax-hailuo-02-standard-image-to-video-schema.json"
     },
     {
       "model": "fal-ai/pixverse/v5/image-to-video",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-pixverse-v5-image-to-video-schema.json"
     },
     {
       "model": "fal-ai/wan-pro/image-to-video",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-wan-pro-image-to-video-schema.json"
     },
     {
       "model": "fal-ai/flux-pro/kontext/max/multi",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-flux-pro-kontext-max-multi-schema.json"
     },
     {
       "model": "fal-ai/sora-2/text-to-video/pro",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-sora-2-text-to-video-pro-schema.json"
     },
     {
       "model": "fal-ai/sora-2/image-to-video/pro",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-sora-2-image-to-video-pro-schema.json"
     },
     {
       "model": "fal-ai/veo3/fast",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-veo3-fast-schema.json"
     },
     {
       "model": "fal-ai/veo3",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-veo3-schema.json"
     },
     {
       "model": "fal-ai/veo3/fast/image-to-video",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-veo3-fast-image-to-video-schema.json"
     },
     {
       "model": "fal-ai/veo3/image-to-video",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-veo3-image-to-video-schema.json"
     },
     {
       "model": "fal-ai/kling-video/v2.5-turbo/pro/image-to-video",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-kling-video-v2.5-turbo-pro-image-to-video-schema.json"
     },
     {
       "model": "fal-ai/kling-video/v2.5-turbo/pro/text-to-video",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-kling-video-v2.5-turbo-pro-text-to-video-schema.json"
     },
     {
       "model": "fal-ai/wan/v2.2-a14b/image-to-video",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-wan-v2.2-a14b-image-to-video-schema.json"
     },
     {
       "model": "fal-ai/wan-effects",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-wan-effects-schema.json"
     },
     {
       "model": "fal-ai/ai-avatar/single-text",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-ai-avatar-single-text-schema.json"
     },
     {
-      "model": "fal.ai/veed/fabric-1.0/fast",
-      "status": "error",
-      "message": "Request error: 404 Client Error: Not Found for url: https://fal.ai/api/openapi/queue/openapi.json?endpoint_id=fal.ai%2Fveed%2Ffabric-1.0%2Ffast"
-    },
-    {
       "model": "fal-ai/bytedance/seedream/v4/edit",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-bytedance-seedream-v4-edit-schema.json"
     },
     {
       "model": "fal-ai/kling-video/v2.1/master/image-to-video",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-kling-video-v2.1-master-image-to-video-schema.json"
     },
     {
       "model": "fal-ai/hyper3d/rodin/v2",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-hyper3d-rodin-v2-schema.json"
     },
     {
       "model": "tripo3d/tripo/v2.5/image-to-3d",
-      "status": "success",
       "filepath": "fal_schemas/tripo3d-tripo-v2.5-image-to-3d-schema.json"
     },
     {
       "model": "sonauto/v2/text-to-music",
-      "status": "success",
       "filepath": "fal_schemas/sonauto-v2-text-to-music-schema.json"
     },
     {
       "model": "fal-ai/pixverse/sound-effects",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-pixverse-sound-effects-schema.json"
     },
     {
       "model": "fal-ai/playai/tts/dialog",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-playai-tts-dialog-schema.json"
     },
     {
       "model": "fal-ai/chatterbox/speech-to-speech",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-chatterbox-speech-to-speech-schema.json"
     },
     {
       "model": "fal-ai/minimax-music/v1.5",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-minimax-music-v1.5-schema.json"
     },
     {
       "model": "fal-ai/flux-lora-portrait-trainer",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-flux-lora-portrait-trainer-schema.json"
     },
     {
       "model": "fal-ai/flux-lora-fast-training",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-flux-lora-fast-training-schema.json"
     },
     {
       "model": "fal-ai/turbo-flux-trainer",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-turbo-flux-trainer-schema.json"
     },
     {
       "model": "fal-ai/wan-trainer/t2v-14b",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-wan-trainer-t2v-14b-schema.json"
     },
     {
       "model": "fal-ai/recraft/v3/create-style",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-recraft-v3-create-style-schema.json"
     },
     {
       "model": "fal-ai/dia-tts/voice-clone",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-dia-tts-voice-clone-schema.json"
     },
     {
       "model": "fal-ai/lucidflux",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-lucidflux-schema.json"
     },
     {
       "model": "fal-ai/ideogram/v3/replace-background",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-ideogram-v3-replace-background-schema.json"
     },
     {
       "model": "fal-ai/qwen-image-edit/image-to-image",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-qwen-image-edit-image-to-image-schema.json"
     },
     {
       "model": "fal-ai/flux-pro/kontext/max",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-flux-pro-kontext-max-schema.json"
     },
     {
       "model": "fal-ai/recraft/vectorize",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-recraft-vectorize-schema.json"
     },
     {
       "model": "bria/video/background-removal",
-      "status": "success",
       "filepath": "fal_schemas/bria-video-background-removal-schema.json"
     },
     {
       "model": "bria/video/increase-resolution",
-      "status": "success",
       "filepath": "fal_schemas/bria-video-increase-resolution-schema.json"
     },
     {
       "model": "fal-ai/bria/background/remove",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-bria-background-remove-schema.json"
     },
     {
       "model": "fal-ai/bria/expand",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-bria-expand-schema.json"
     },
     {
       "model": "fal-ai/bria/eraser",
-      "status": "success",
       "filepath": "fal_schemas/fal-ai-bria-eraser-schema.json"
     }
   ]
