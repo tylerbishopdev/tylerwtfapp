@@ -56,28 +56,28 @@ export function ModelSidebar({ models, onModelSelect }: ModelSidebarProps) {
     };
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full bg-zinc-950 text-accent">
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    Fal.ai Models
+            <div className="p-4 border-b border-">
+                <h2 className="text-lg text-accent font-semibold ">
+                    tylers.wtf
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Select a model to generate content
+                <p className="text-sm text-background">
+                    Model Playground Supreme
                 </p>
             </div>
 
             {/* Categories */}
             <div className="flex-1 overflow-y-auto">
                 {Object.entries(modelsByCategory).map(([category, categoryModels]) => (
-                    <div key={category} className="border-b border-gray-100 dark:border-gray-700 last:border-b-0">
+                    <div key={category} className="border-b last:border-b-0">
                         <button
                             onClick={() => toggleCategory(category)}
                             className="w-full flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                         >
                             <div className="flex items-center gap-2">
                                 {categoryIcons[category] || <Wrench className="w-4 h-4" />}
-                                <span className="font-medium text-gray-900 dark:text-white">
+                                <span className="font-medium text-secondary dark:text-primary">
                                     {category}
                                 </span>
                                 <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-600 px-2 py-1 rounded">
@@ -98,8 +98,8 @@ export function ModelSidebar({ models, onModelSelect }: ModelSidebarProps) {
                                         key={model.name}
                                         onClick={() => handleModelClick(model)}
                                         className={`w-full text-left p-3 pl-8 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${selectedModel?.name === model.name
-                                                ? "bg-blue-50 dark:bg-blue-900/20 border-r-2 border-blue-500"
-                                                : ""
+                                            ? "bg-blue-50 dark:bg-blue-900/20 border-r-2 border-blue-500"
+                                            : ""
                                             }`}
                                     >
                                         <div className="flex flex-col">

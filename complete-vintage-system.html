@@ -1,0 +1,2342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDS-1973 Complete Vintage Analog Design System</title>
+    <style>
+        :root {
+            /* Authentic Equipment Colors */
+            --ssl-gray: #6B6B6B;
+            --neve-champagne: #D4C5A0;
+            --api-black: #2C2C2C;
+            --studer-blue: #4682B4;
+            --moog-orange: #FF6B35;
+            --neve-brown: #8B4513;
+            --power-green: #32CD32;
+            --signal-orange: #FF8C00;
+            --peak-red: #FF0000;
+            --ready-blue: #1E90FF;
+            --warning-amber: #FFB000;
+            
+            /* Material Textures */
+            --brushed-aluminum: linear-gradient(135deg, #f0f0f0 0%, #c0c0c0 50%, #a0a0a0 100%);
+            --anodized-black: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 50%, #000000 100%);
+            --chrome-finish: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 25%, #f0f0f0 50%, #e0e0e0 75%, #f5f5f5 100%);
+            
+            /* Typography */
+            --equipment-font: 'Arial', 'Helvetica', sans-serif;
+            --technical-font: 'Monaco', 'Consolas', 'Courier New', monospace;
+            
+            /* Shadows */
+            --equipment-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            --control-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            --inset-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--equipment-font);
+            background: linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 100%);
+            color: #e0e0e0;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .studio-console {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #333333 0%, #1a1a1a 100%);
+        }
+
+        /* Console Header */
+        .console-header {
+            background: var(--brushed-aluminum);
+            border-bottom: 3px solid var(--api-black);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--equipment-shadow);
+            position: relative;
+        }
+
+        .console-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        /* Nixie Display */
+        .nixie-display {
+            display: flex;
+            gap: 4px;
+            background: #1a1a1a;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 2px solid #333;
+            box-shadow: var(--inset-shadow);
+        }
+
+        .nixie-digit {
+            width: 24px;
+            height: 32px;
+            background: radial-gradient(circle, #FF6B35 0%, #CC5500 70%, #AA3300 100%);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Times New Roman', serif;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 8px rgba(255, 107, 53, 0.6);
+            animation: nixie-glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes nixie-glow {
+            0% { box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 8px rgba(255, 107, 53, 0.6); }
+            100% { box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 12px rgba(255, 107, 53, 0.8); }
+        }
+
+        .studio-nameplate {
+            background: var(--anodized-black);
+            padding: 12px 20px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            box-shadow: var(--control-shadow);
+        }
+
+        .studio-nameplate h1 {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--moog-orange);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .studio-nameplate p {
+            font-size: 11px;
+            color: #999;
+            font-family: var(--technical-font);
+        }
+
+        /* Status Indicators */
+        .status-indicators {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .power-indicator, .signal-indicator, .ready-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #333;
+            background: #222;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .power-indicator.active {
+            background: var(--power-green);
+            border-color: var(--power-green);
+            box-shadow: 0 0 10px rgba(50, 205, 50, 0.6);
+        }
+
+        .signal-indicator.active {
+            background: var(--signal-orange);
+            border-color: var(--signal-orange);
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.6);
+        }
+
+        .ready-indicator.active {
+            background: var(--ready-blue);
+            border-color: var(--ready-blue);
+            box-shadow: 0 0 10px rgba(30, 144, 255, 0.6);
+        }
+
+        /* Main Console Body */
+        .console-body {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Component Sidebar */
+        .component-sidebar {
+            width: 320px;
+            background: var(--ssl-gray);
+            border-right: 3px solid var(--api-black);
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--equipment-shadow);
+            position: relative;
+        }
+
+        .component-sidebar::after {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 20px,
+                #333 20px,
+                #333 24px
+            );
+            border-radius: 3px;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: var(--chrome-finish);
+            border-bottom: 2px solid var(--api-black);
+            box-shadow: var(--control-shadow);
+        }
+
+        .sidebar-header h2 {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--api-black);
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .component-count {
+            font-size: 11px;
+            color: #666;
+            font-family: var(--technical-font);
+        }
+
+        /* Component Navigation */
+        .component-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 4px;
+        }
+
+        .nav-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: #e0e0e0;
+            padding: 8px 20px;
+            background: var(--api-black);
+            border-top: 1px solid #555;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--technical-font);
+            letter-spacing: 0.5px;
+        }
+
+        .nav-title .count {
+            background: var(--moog-orange);
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .nav-list {
+            list-style: none;
+            background: #555;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 10px 32px;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 12px;
+            border-bottom: 1px solid #666;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 4px;
+            background: #777;
+            border-radius: 50%;
+        }
+
+        .nav-link:hover {
+            background: #666;
+            padding-left: 36px;
+        }
+
+        .nav-link.active {
+            background: var(--neve-champagne);
+            color: var(--api-black);
+            border-left: 3px solid var(--moog-orange);
+            font-weight: bold;
+        }
+
+        .nav-link.active::before {
+            background: var(--moog-orange);
+            box-shadow: 0 0 4px var(--moog-orange);
+        }
+
+        /* Main Component Display */
+        .component-display {
+            flex: 1;
+            background: linear-gradient(180deg, #f5f5f5 0%, #e8e8e8 100%);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .component-header {
+            background: var(--chrome-finish);
+            border-bottom: 2px solid #ccc;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--control-shadow);
+        }
+
+        .component-header h2 {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--api-black);
+        }
+
+        .component-info {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .component-code {
+            font-family: var(--technical-font);
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--ready-blue);
+            background: var(--api-black);
+            padding: 4px 8px;
+            border-radius: 2px;
+        }
+
+        .component-status {
+            font-family: var(--technical-font);
+            font-size: 10px;
+            color: var(--power-green);
+            font-weight: bold;
+        }
+
+        .component-content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #fafafa 0%, #eeeeee 100%);
+        }
+
+        /* Component Demonstrations */
+        .component-demo {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--api-black);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .demo-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .demo-section {
+            margin-bottom: 32px;
+        }
+
+        .demo-section h4 {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--ssl-gray);
+            margin-bottom: 16px;
+            font-family: var(--technical-font);
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .demo-item {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 16px;
+        }
+
+        .demo-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: var(--technical-font);
+        }
+
+        /* Professional Equipment Buttons */
+        .equipment-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            font-family: var(--equipment-font);
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+            user-select: none;
+            margin: 4px;
+        }
+
+        .equipment-button:active {
+            transform: translateY(1px);
+        }
+
+        .equipment-button.primary {
+            background: var(--chrome-finish);
+            color: var(--api-black);
+            border-color: var(--ssl-gray);
+            box-shadow: var(--control-shadow);
+        }
+
+        .equipment-button.primary:hover {
+            border-color: var(--moog-orange);
+            box-shadow: 0 0 8px rgba(255, 107, 53, 0.3);
+        }
+
+        .equipment-button.danger {
+            background: var(--anodized-black);
+            color: #e0e0e0;
+            border-color: var(--peak-red);
+            box-shadow: var(--control-shadow);
+        }
+
+        .equipment-button.danger:hover {
+            background: #333;
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.3);
+        }
+
+        .equipment-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Professional Input Fields */
+        .equipment-input {
+            width: 100%;
+            padding: 10px 12px;
+            font-family: var(--technical-font);
+            font-size: 12px;
+            color: var(--api-black);
+            background: #ffffff;
+            border: 2px solid #ccc;
+            border-radius: 3px;
+            box-shadow: var(--inset-shadow);
+            transition: all 0.2s ease;
+        }
+
+        .equipment-input:focus {
+            outline: none;
+            border-color: var(--ready-blue);
+            box-shadow: var(--inset-shadow), 0 0 0 2px rgba(30, 144, 255, 0.2);
+        }
+
+        /* Professional Linear Faders */
+        .linear-fader {
+            width: 40px;
+            height: 200px;
+            background: var(--anodized-black);
+            border: 2px solid #555;
+            border-radius: 4px;
+            position: relative;
+            margin: 8px;
+            box-shadow: var(--inset-shadow);
+        }
+
+        .fader-track {
+            position: absolute;
+            left: 50%;
+            top: 8px;
+            bottom: 8px;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--ssl-gray) 0%, #333 100%);
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .fader-cap {
+            position: absolute;
+            left: 50%;
+            width: 32px;
+            height: 16px;
+            background: var(--chrome-finish);
+            border: 2px solid #999;
+            border-radius: 3px;
+            transform: translateX(-50%);
+            cursor: pointer;
+            box-shadow: var(--control-shadow);
+            transition: all 0.1s ease;
+            bottom: 50%;
+        }
+
+        .fader-cap:hover {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .fader-cap.dragging {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .fader-cap::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 4px;
+            right: 4px;
+            height: 1px;
+            background: #666;
+            transform: translateY(-50%);
+        }
+
+        .fader-label {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            font-family: var(--technical-font);
+            color: #666;
+            text-align: center;
+        }
+
+        .fader-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            font-family: var(--technical-font);
+            color: var(--moog-orange);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Professional Rotary Switches */
+        .rotary-switch {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            margin: 8px;
+        }
+
+        .rotary-knob {
+            width: 100%;
+            height: 100%;
+            background: var(--chrome-finish);
+            border: 3px solid #999;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            box-shadow: var(--control-shadow);
+            transition: all 0.1s ease;
+        }
+
+        .rotary-knob:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+            transform: scale(1.02);
+        }
+
+        .rotary-knob.dragging {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            transform: scale(1.05);
+        }
+
+        .knob-pointer {
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            width: 3px;
+            height: 20px;
+            background: var(--peak-red);
+            border-radius: 2px;
+            transform: translateX(-50%);
+            transform-origin: center 26px;
+            box-shadow: 0 0 4px rgba(255, 0, 0, 0.5);
+        }
+
+        .knob-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: var(--anodized-black);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid #666;
+        }
+
+        .knob-label {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            font-family: var(--technical-font);
+            color: #666;
+            text-align: center;
+        }
+
+        .knob-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            font-family: var(--technical-font);
+            color: var(--moog-orange);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Professional Toggle Switches */
+        .toggle-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px;
+            cursor: pointer;
+        }
+
+        .switch-housing {
+            width: 50px;
+            height: 24px;
+            background: var(--anodized-black);
+            border: 2px solid #555;
+            border-radius: 12px;
+            position: relative;
+            transition: all 0.2s ease;
+            box-shadow: var(--inset-shadow);
+        }
+
+        .switch-toggle {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: var(--chrome-finish);
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            box-shadow: var(--control-shadow);
+        }
+
+        .toggle-switch.active .switch-housing {
+            background: var(--power-green);
+            border-color: var(--power-green);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 8px rgba(50, 205, 50, 0.3);
+        }
+
+        .toggle-switch.active .switch-toggle {
+            transform: translateX(24px);
+        }
+
+        .switch-label {
+            font-size: 11px;
+            font-family: var(--technical-font);
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Professional VU Meters */
+        .vu-meter {
+            width: 200px;
+            height: 40px;
+            background: var(--anodized-black);
+            border: 2px solid #555;
+            border-radius: 4px;
+            position: relative;
+            margin: 8px;
+            overflow: hidden;
+            box-shadow: var(--inset-shadow);
+        }
+
+        .vu-scale {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(to right,
+                var(--power-green) 0%,
+                var(--power-green) 60%,
+                var(--warning-amber) 60%,
+                var(--warning-amber) 85%,
+                var(--peak-red) 85%,
+                var(--peak-red) 100%
+            );
+            opacity: 0.3;
+        }
+
+        .vu-needle {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: white;
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+            transition: left 0.1s ease-out;
+        }
+
+        .vu-labels {
+            position: absolute;
+            bottom: -16px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 8px;
+            font-family: var(--technical-font);
+            color: #666;
+        }
+
+        /* Professional Tabs */
+        .equipment-tabs {
+            background: var(--ssl-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: var(--control-shadow);
+            margin: 8px 0;
+        }
+
+        .tab-headers {
+            display: flex;
+            background: var(--chrome-finish);
+            border-bottom: 2px solid #999;
+        }
+
+        .tab-header {
+            padding: 12px 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--api-black);
+            background: transparent;
+            border: none;
+            border-right: 1px solid #ccc;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--technical-font);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-header:hover {
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .tab-header.active {
+            background: var(--moog-orange);
+            color: #000;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .tab-content {
+            padding: 20px;
+            background: white;
+            color: var(--api-black);
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* Equipment Status Footer */
+        .equipment-footer {
+            height: 36px;
+            background: var(--anodized-black);
+            border-top: 2px solid #555;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            font-family: var(--technical-font);
+            font-size: 10px;
+            color: #999;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .status-left, .status-center, .status-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .temperature-gauge, .power-consumption, .uptime-counter {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .gauge-label {
+            color: #666;
+            font-weight: bold;
+        }
+
+        .gauge-value {
+            color: var(--power-green);
+            font-weight: bold;
+        }
+
+        .system-clock {
+            font-size: 12px;
+            color: var(--moog-orange);
+            font-weight: bold;
+            font-family: 'Times New Roman', serif;
+        }
+
+        /* Code Examples */
+        .code-example {
+            background: var(--anodized-black);
+            border: 2px solid #555;
+            border-radius: 4px;
+            margin-top: 24px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: var(--ssl-gray);
+            padding: 8px 16px;
+            border-bottom: 1px solid #666;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: #e0e0e0;
+            font-family: var(--technical-font);
+            text-transform: uppercase;
+        }
+
+        .code-copy {
+            padding: 4px 8px;
+            background: transparent;
+            border: 1px solid #777;
+            color: #999;
+            font-family: var(--technical-font);
+            font-size: 9px;
+            border-radius: 2px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .code-copy:hover {
+            border-color: var(--moog-orange);
+            color: var(--moog-orange);
+        }
+
+        .code-content {
+            padding: 16px;
+            font-family: var(--technical-font);
+            font-size: 11px;
+            line-height: 1.4;
+            color: var(--power-green);
+            overflow-x: auto;
+        }
+
+        /* Modal Styles */
+        .modal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: none;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--chrome-finish);
+            border: 3px solid var(--api-black);
+            border-radius: 8px;
+            box-shadow: var(--equipment-shadow);
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
+        }
+
+        .modal-header {
+            padding: 16px 24px;
+            background: var(--anodized-black);
+            color: #e0e0e0;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--peak-red);
+        }
+
+        .modal-body {
+            padding: 24px;
+            color: var(--api-black);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .component-sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 999;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .component-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .console-body {
+                flex-direction: column;
+            }
+            
+            .component-display {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .console-header {
+                padding: 12px 16px;
+            }
+            
+            .brand-section {
+                gap: 16px;
+            }
+            
+            .nixie-display {
+                padding: 6px 8px;
+            }
+            
+            .nixie-digit {
+                width: 20px;
+                height: 28px;
+                font-size: 16px;
+            }
+            
+            .studio-nameplate {
+                padding: 8px 12px;
+            }
+            
+            .component-content {
+                padding: 16px;
+            }
+            
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="studio-console">
+        <!-- Professional Studio Header -->
+        <header class="console-header">
+            <div class="brand-section">
+                <div class="nixie-display">
+                    <span class="nixie-digit">V</span>
+                    <span class="nixie-digit">D</span>
+                    <span class="nixie-digit">S</span>
+                    <div style="width: 8px;"></div>
+                    <span class="nixie-digit">1</span>
+                    <span class="nixie-digit">9</span>
+                    <span class="nixie-digit">7</span>
+                    <span class="nixie-digit">3</span>
+                </div>
+                <div class="studio-nameplate">
+                    <h1>VINTAGE ANALOG DESIGN SYSTEM</h1>
+                    <p>Professional Studio Equipment Library</p>
+                </div>
+            </div>
+            <div class="status-indicators">
+                <div class="power-indicator active"></div>
+                <div class="signal-indicator"></div>
+                <div class="ready-indicator active"></div>
+            </div>
+        </header>
+
+        <div class="console-body">
+            <!-- Component Navigation Sidebar -->
+            <aside class="component-sidebar">
+                <div class="sidebar-header">
+                    <h2>Component Library</h2>
+                    <div class="component-count">31 Components</div>
+                </div>
+
+                <nav class="component-nav">
+                    <!-- Form Controls (8) -->
+                    <div class="nav-section">
+                        <h3 class="nav-title">Form Controls <span class="count">8</span></h3>
+                        <ul class="nav-list">
+                            <li><a href="#buttons" data-component="buttons" class="nav-link active">Push Button Switches</a></li>
+                            <li><a href="#inputs" data-component="inputs" class="nav-link">Input Terminals</a></li>
+                            <li><a href="#dropdowns" data-component="dropdowns" class="nav-link">Patch Bay Selectors</a></li>
+                            <li><a href="#selects" data-component="selects" class="nav-link">Rotary Switches</a></li>
+                            <li><a href="#sliders" data-component="sliders" class="nav-link">Linear Faders</a></li>
+                            <li><a href="#checkboxes" data-component="checkboxes" class="nav-link">Toggle Switches</a></li>
+                            <li><a href="#radios" data-component="radios" class="nav-link">Selector Banks</a></li>
+                            <li><a href="#textareas" data-component="textareas" class="nav-link">Text Terminals</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Navigation (5) -->
+                    <div class="nav-section">
+                        <h3 class="nav-title">Navigation <span class="count">5</span></h3>
+                        <ul class="nav-list">
+                            <li><a href="#navbar" data-component="navbar" class="nav-link">Console Navigation</a></li>
+                            <li><a href="#tabs" data-component="tabs" class="nav-link">Section Tabs</a></li>
+                            <li><a href="#pagination" data-component="pagination" class="nav-link">Counter Displays</a></li>
+                            <li><a href="#breadcrumbs" data-component="breadcrumbs" class="nav-link">Signal Path</a></li>
+                            <li><a href="#menus" data-component="menus" class="nav-link">Equipment Menus</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Data Display (5) -->
+                    <div class="nav-section">
+                        <h3 class="nav-title">Data Display <span class="count">5</span></h3>
+                        <ul class="nav-list">
+                            <li><a href="#charts" data-component="charts" class="nav-link">Oscilloscope Displays</a></li>
+                            <li><a href="#tables" data-component="tables" class="nav-link">Parameter Tables</a></li>
+                            <li><a href="#lists" data-component="lists" class="nav-link">Equipment Lists</a></li>
+                            <li><a href="#cards" data-component="cards" class="nav-link">Module Cards</a></li>
+                            <li><a href="#statistics" data-component="statistics" class="nav-link">Metric Displays</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Feedback (5) -->
+                    <div class="nav-section">
+                        <h3 class="nav-title">Feedback <span class="count">5</span></h3>
+                        <ul class="nav-list">
+                            <li><a href="#alerts" data-component="alerts" class="nav-link">Warning Indicators</a></li>
+                            <li><a href="#notifications" data-component="notifications" class="nav-link">Status Displays</a></li>
+                            <li><a href="#progress" data-component="progress" class="nav-link">VU Meters</a></li>
+                            <li><a href="#loading" data-component="loading" class="nav-link">Warm-up Indicators</a></li>
+                            <li><a href="#badges" data-component="badges" class="nav-link">Equipment Labels</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Overlays (5) -->
+                    <div class="nav-section">
+                        <h3 class="nav-title">Overlays <span class="count">5</span></h3>
+                        <ul class="nav-list">
+                            <li><a href="#modals" data-component="modals" class="nav-link">Config Screens</a></li>
+                            <li><a href="#dialogs" data-component="dialogs" class="nav-link">System Dialogs</a></li>
+                            <li><a href="#popovers" data-component="popovers" class="nav-link">Parameter Info</a></li>
+                            <li><a href="#tooltips" data-component="tooltips" class="nav-link">Control Hints</a></li>
+                            <li><a href="#drawers" data-component="drawers" class="nav-link">Panel Drawers</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Layout (5) -->
+                    <div class="nav-section">
+                        <h3 class="nav-title">Layout <span class="count">5</span></h3>
+                        <ul class="nav-list">
+                            <li><a href="#accordion" data-component="accordion" class="nav-link">Console Strips</a></li>
+                            <li><a href="#carousel" data-component="carousel" class="nav-link">Equipment Gallery</a></li>
+                            <li><a href="#timeline" data-component="timeline" class="nav-link">Signal Timeline</a></li>
+                            <li><a href="#dock" data-component="dock" class="nav-link">Monitor Controller</a></li>
+                            <li><a href="#panels" data-component="panels" class="nav-link">Equipment Panels</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Media (3) -->
+                    <div class="nav-section">
+                        <h3 class="nav-title">Media <span class="count">3</span></h3>
+                        <ul class="nav-list">
+                            <li><a href="#avatar" data-component="avatar" class="nav-link">User Identification</a></li>
+                            <li><a href="#galleries" data-component="galleries" class="nav-link">Media Galleries</a></li>
+                            <li><a href="#players" data-component="players" class="nav-link">Transport Controls</a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- Main Component Display -->
+            <main class="component-display">
+                <div class="component-header">
+                    <h2 id="componentTitle">Push Button Switches</h2>
+                    <div class="component-info">
+                        <span class="component-code" id="componentCode">PB-001</span>
+                        <span class="component-status">OPERATIONAL</span>
+                    </div>
+                </div>
+
+                <div class="component-content" id="componentContent">
+                    <!-- Component demonstrations will be rendered here -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Equipment Status Footer -->
+        <footer class="equipment-footer">
+            <div class="status-left">
+                <div class="temperature-gauge">
+                    <span class="gauge-label">TEMP</span>
+                    <span class="gauge-value" id="temperatureValue">25°C</span>
+                </div>
+                <div class="power-consumption">
+                    <span class="gauge-label">POWER</span>
+                    <span class="gauge-value" id="powerValue">240W</span>
+                </div>
+            </div>
+            <div class="status-center">
+                <div class="system-clock" id="systemClock">00:00:00</div>
+            </div>
+            <div class="status-right">
+                <div class="uptime-counter">
+                    <span class="gauge-label">UPTIME</span>
+                    <span class="gauge-value" id="uptimeValue">00:00:00</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal Container -->
+    <div id="modalContainer" class="modal-container"></div>
+
+    <script>
+        /**
+         * VDS-1973 Complete Vintage Analog Design System
+         * Professional Studio Equipment Simulation with ALL components
+         */
+
+        class ProfessionalFader {
+            constructor(element, options = {}) {
+                this.element = element;
+                this.track = element.querySelector('.fader-track');
+                this.cap = element.querySelector('.fader-cap');
+                this.valueDisplay = element.querySelector('.fader-value');
+                
+                this.value = options.value || 50;
+                this.min = options.min || 0;
+                this.max = options.max || 100;
+                this.isDragging = false;
+                this.startY = 0;
+                this.startValue = 0;
+                
+                if (this.track && this.cap) {
+                    this.setupEventListeners();
+                    this.updatePosition();
+                }
+            }
+            
+            setupEventListeners() {
+                // Mouse events
+                this.cap.addEventListener('mousedown', (e) => this.startDrag(e));
+                this.track.addEventListener('mousedown', (e) => this.handleTrackClick(e));
+                
+                // Touch events
+                this.cap.addEventListener('touchstart', (e) => this.startDrag(e), { passive: false });
+                this.track.addEventListener('touchstart', (e) => this.handleTrackClick(e), { passive: false });
+                
+                // Global events
+                document.addEventListener('mousemove', (e) => this.drag(e));
+                document.addEventListener('mouseup', (e) => this.endDrag(e));
+                document.addEventListener('touchmove', (e) => this.drag(e), { passive: false });
+                document.addEventListener('touchend', (e) => this.endDrag(e));
+            }
+            
+            handleTrackClick(e) {
+                if (e.target === this.cap) return;
+                
+                const rect = this.track.getBoundingClientRect();
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                const relativeY = rect.bottom - clientY;
+                const percentage = Math.max(0, Math.min(100, (relativeY / rect.height) * 100));
+                
+                this.setValue(this.min + (percentage / 100) * (this.max - this.min));
+                this.dispatchEvent();
+            }
+            
+            startDrag(e) {
+                this.isDragging = true;
+                this.cap.classList.add('dragging');
+                
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                this.startY = clientY;
+                this.startValue = this.value;
+                
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            drag(e) {
+                if (!this.isDragging) return;
+                
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                const deltaY = this.startY - clientY;
+                const trackHeight = this.track.offsetHeight - this.cap.offsetHeight;
+                const sensitivity = (this.max - this.min) / trackHeight;
+                
+                const newValue = this.startValue + (deltaY * sensitivity);
+                this.setValue(Math.max(this.min, Math.min(this.max, newValue)));
+                
+                e.preventDefault();
+            }
+            
+            endDrag(e) {
+                if (!this.isDragging) return;
+                
+                this.isDragging = false;
+                this.cap.classList.remove('dragging');
+                this.dispatchEvent();
+            }
+            
+            setValue(value) {
+                this.value = Math.max(this.min, Math.min(this.max, value));
+                this.updatePosition();
+            }
+            
+            updatePosition() {
+                const percentage = ((this.value - this.min) / (this.max - this.min)) * 100;
+                this.cap.style.bottom = `${percentage}%`;
+                
+                if (this.valueDisplay) {
+                    this.valueDisplay.textContent = Math.round(this.value);
+                }
+            }
+            
+            dispatchEvent() {
+                this.element.dispatchEvent(new CustomEvent('fader-change', {
+                    detail: { value: this.value, percentage: ((this.value - this.min) / (this.max - this.min)) * 100 }
+                }));
+            }
+        }
+
+        class ProfessionalRotaryKnob {
+            constructor(element, options = {}) {
+                this.element = element;
+                this.knob = element.querySelector('.rotary-knob');
+                this.pointer = element.querySelector('.knob-pointer');
+                this.valueDisplay = element.querySelector('.knob-value');
+                
+                this.value = options.value || 5;
+                this.min = options.min || 0;
+                this.max = options.max || 10;
+                this.rotation = 0;
+                this.isDragging = false;
+                this.startY = 0;
+                this.startRotation = 0;
+                
+                if (this.knob && this.pointer) {
+                    this.setupEventListeners();
+                    this.updateRotation();
+                }
+            }
+            
+            setupEventListeners() {
+                this.knob.addEventListener('mousedown', (e) => this.startDrag(e));
+                this.knob.addEventListener('touchstart', (e) => this.startDrag(e), { passive: false });
+                this.knob.addEventListener('wheel', (e) => this.handleWheel(e), { passive: false });
+                
+                document.addEventListener('mousemove', (e) => this.drag(e));
+                document.addEventListener('mouseup', (e) => this.endDrag(e));
+                document.addEventListener('touchmove', (e) => this.drag(e), { passive: false });
+                document.addEventListener('touchend', (e) => this.endDrag(e));
+            }
+            
+            startDrag(e) {
+                this.isDragging = true;
+                this.knob.classList.add('dragging');
+                
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                this.startY = clientY;
+                this.startRotation = this.rotation;
+                
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            drag(e) {
+                if (!this.isDragging) return;
+                
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                const deltaY = this.startY - clientY;
+                const sensitivity = 0.5;
+                const newRotation = Math.max(-135, Math.min(135, this.startRotation + deltaY * sensitivity));
+                
+                this.setRotation(newRotation);
+                e.preventDefault();
+            }
+            
+            endDrag(e) {
+                if (!this.isDragging) return;
+                
+                this.isDragging = false;
+                this.knob.classList.remove('dragging');
+                this.dispatchEvent();
+            }
+            
+            handleWheel(e) {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -5 : 5;
+                const newRotation = Math.max(-135, Math.min(135, this.rotation + delta));
+                this.setRotation(newRotation);
+                this.dispatchEvent();
+            }
+            
+            setRotation(rotation) {
+                this.rotation = rotation;
+                const normalizedValue = (rotation + 135) / 270;
+                this.value = Math.round(this.min + normalizedValue * (this.max - this.min));
+                this.updateRotation();
+            }
+            
+            updateRotation() {
+                this.pointer.style.transform = `rotate(${this.rotation}deg)`;
+                
+                if (this.valueDisplay) {
+                    this.valueDisplay.textContent = this.value;
+                }
+            }
+            
+            dispatchEvent() {
+                this.element.dispatchEvent(new CustomEvent('rotary-change', {
+                    detail: { value: this.value, rotation: this.rotation }
+                }));
+            }
+        }
+
+        class VintageAnalogDesignSystem {
+            constructor() {
+                this.currentComponent = 'buttons';
+                this.components = new Map();
+                this.faders = new Map();
+                this.rotaryKnobs = new Map();
+                this.vuMeters = new Map();
+                this.intervals = new Set();
+                
+                this.init();
+            }
+            
+            init() {
+                console.log('🎛️ Initializing VDS-1973 Complete System...');
+                
+                this.setupNavigation();
+                this.startSystemClock();
+                this.startStatusUpdates();
+                this.loadComponent('buttons');
+                
+                console.log('✨ All 31 components operational');
+            }
+            
+            setupNavigation() {
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const component = link.dataset.component;
+                        if (component) {
+                            this.loadComponent(component);
+                            
+                            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                            link.classList.add('active');
+                        }
+                    });
+                });
+            }
+            
+            loadComponent(componentName) {
+                this.currentComponent = componentName;
+                const content = document.getElementById('componentContent');
+                const title = document.getElementById('componentTitle');
+                const code = document.getElementById('componentCode');
+                
+                const componentData = this.getComponentData(componentName);
+                if (componentData) {
+                    title.textContent = componentData.title;
+                    code.textContent = componentData.code;
+                }
+                
+                content.innerHTML = this.renderComponent(componentName);
+                this.initializeComponent(componentName);
+            }
+            
+            getComponentData(name) {
+                const components = {
+                    buttons: { title: 'Push Button Switches', code: 'PB-001' },
+                    inputs: { title: 'Input Terminals', code: 'IT-002' },
+                    dropdowns: { title: 'Patch Bay Selectors', code: 'PBS-003' },
+                    selects: { title: 'Rotary Switches', code: 'RS-004' },
+                    sliders: { title: 'Linear Faders', code: 'LF-005' },
+                    checkboxes: { title: 'Toggle Switches', code: 'TS-006' },
+                    radios: { title: 'Selector Banks', code: 'SB-007' },
+                    textareas: { title: 'Text Terminals', code: 'TT-008' },
+                    navbar: { title: 'Console Navigation', code: 'CN-101' },
+                    tabs: { title: 'Section Tabs', code: 'ST-102' },
+                    pagination: { title: 'Counter Displays', code: 'CD-103' },
+                    breadcrumbs: { title: 'Signal Path', code: 'SP-104' },
+                    menus: { title: 'Equipment Menus', code: 'EM-105' },
+                    charts: { title: 'Oscilloscope Displays', code: 'OD-201' },
+                    tables: { title: 'Parameter Tables', code: 'PT-202' },
+                    lists: { title: 'Equipment Lists', code: 'EL-203' },
+                    cards: { title: 'Module Cards', code: 'MC-204' },
+                    statistics: { title: 'Metric Displays', code: 'MD-205' },
+                    alerts: { title: 'Warning Indicators', code: 'WI-301' },
+                    notifications: { title: 'Status Displays', code: 'SD-302' },
+                    progress: { title: 'VU Meters', code: 'VM-303' },
+                    loading: { title: 'Warm-up Indicators', code: 'WU-304' },
+                    badges: { title: 'Equipment Labels', code: 'EL-305' },
+                    modals: { title: 'Config Screens', code: 'CS-401' },
+                    dialogs: { title: 'System Dialogs', code: 'SD-402' },
+                    popovers: { title: 'Parameter Info', code: 'PI-403' },
+                    tooltips: { title: 'Control Hints', code: 'CH-404' },
+                    drawers: { title: 'Panel Drawers', code: 'PD-405' },
+                    accordion: { title: 'Console Strips', code: 'CS-501' },
+                    carousel: { title: 'Equipment Gallery', code: 'EG-502' },
+                    timeline: { title: 'Signal Timeline', code: 'ST-503' },
+                    dock: { title: 'Monitor Controller', code: 'MC-504' },
+                    panels: { title: 'Equipment Panels', code: 'EP-505' },
+                    avatar: { title: 'User Identification', code: 'UI-601' },
+                    galleries: { title: 'Media Galleries', code: 'MG-602' },
+                    players: { title: 'Transport Controls', code: 'TC-603' }
+                };
+                
+                return components[name];
+            }
+            
+            renderComponent(name) {
+                const renderers = {
+                    buttons: () => this.renderButtons(),
+                    inputs: () => this.renderInputs(),
+                    dropdowns: () => this.renderDropdowns(),
+                    selects: () => this.renderSelects(),
+                    sliders: () => this.renderSliders(),
+                    checkboxes: () => this.renderCheckboxes(),
+                    radios: () => this.renderRadios(),
+                    textareas: () => this.renderTextareas(),
+                    navbar: () => this.renderNavbar(),
+                    tabs: () => this.renderTabs(),
+                    pagination: () => this.renderPagination(),
+                    breadcrumbs: () => this.renderBreadcrumbs(),
+                    menus: () => this.renderMenus(),
+                    charts: () => this.renderCharts(),
+                    tables: () => this.renderTables(),
+                    lists: () => this.renderLists(),
+                    cards: () => this.renderCards(),
+                    statistics: () => this.renderStatistics(),
+                    alerts: () => this.renderAlerts(),
+                    notifications: () => this.renderNotifications(),
+                    progress: () => this.renderProgress(),
+                    loading: () => this.renderLoading(),
+                    badges: () => this.renderBadges(),
+                    modals: () => this.renderModals(),
+                    dialogs: () => this.renderDialogs(),
+                    popovers: () => this.renderPopovers(),
+                    tooltips: () => this.renderTooltips(),
+                    drawers: () => this.renderDrawers(),
+                    accordion: () => this.renderAccordion(),
+                    carousel: () => this.renderCarousel(),
+                    timeline: () => this.renderTimeline(),
+                    dock: () => this.renderDock(),
+                    panels: () => this.renderPanels(),
+                    avatar: () => this.renderAvatar(),
+                    galleries: () => this.renderGalleries(),
+                    players: () => this.renderPlayers()
+                };
+                
+                return renderers[name] ? renderers[name]() : this.renderDefault(name);
+            }
+            
+            renderButtons() {
+                return `
+                    <div class="component-demo">
+                        <h3 class="demo-title">Professional Push Button Switches</h3>
+                        <p class="demo-description">Studio-grade momentary and latching push button switches with LED indicators and authentic tactile feedback.</p>
+                        
+                        <div class="demo-section">
+                            <h4>Primary Action Buttons</h4>
+                            <div class="demo-grid">
+                                <div class="demo-item">
+                                    <div class="demo-label">Transport Controls</div>
+                                    <button class="equipment-button primary">RECORD</button>
+                                    <button class="equipment-button primary">PLAY</button>
+                                    <button class="equipment-button primary">STOP</button>
+                                </div>
+                                
+                                <div class="demo-item">
+                                    <div class="demo-label">Console Functions</div>
+                                    <button class="equipment-button primary">SOLO</button>
+                                    <button class="equipment-button primary">MUTE</button>
+                                    <button class="equipment-button primary">CUE</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="demo-section">
+                            <h4>Danger/Emergency Controls</h4>
+                            <div class="demo-grid">
+                                <div class="demo-item">
+                                    <div class="demo-label">System Controls</div>
+                                    <button class="equipment-button danger">EMERGENCY STOP</button>
+                                    <button class="equipment-button danger">SYSTEM RESET</button>
+                                    <button class="equipment-button danger" disabled>DISABLED</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${this.renderCodeExample('buttons')}
+                    </div>
+                `;
+            }
+            
+            renderInputs() {
+                return `
+                    <div class="component-demo">
+                        <h3 class="demo-title">Professional Input Terminals</h3>
+                        <p class="demo-description">High-impedance input terminals with phantom power, gain control, and signal level indicators.</p>
+                        
+                        <div class="demo-section">
+                            <h4>Signal Input Terminals</h4>
+                            <div class="demo-grid">
+                                <div class="demo-item">
+                                    <div class="demo-label">Microphone Input</div>
+                                    <input type="text" class="equipment-input" placeholder="MIC 01 - Vocal Booth" value="">
+                                </div>
+                                
+                                <div class="demo-item">
+                                    <div class="demo-label">Line Input Level (dB)</div>
+                                    <input type="number" class="equipment-input" placeholder="0" min="-60" max="+24" step="0.1">
+                                </div>
+                                
+                                <div class="demo-item">
+                                    <div class="demo-label">Frequency Response (Hz)</div>
+                                    <input type="number" class="equipment-input" placeholder="1000" min="20" max="20000">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${this.renderCodeExample('inputs')}
+                    </div>
+                `;
+            }
+            
+            renderDropdowns() {
+                return `
+                    <div class="component-demo">
+                        <h3 class="demo-title">Professional Patch Bay Selectors</h3>
+                        <p class="demo-description">Professional patch bay selection menus for signal routing and equipment configuration.</p>
+                        
+                        <div class="demo-section">
+                            <h4>Signal Routing Selectors</h4>
+                            <div class="demo-grid">
+                                <div class="demo-item">
+                                    <div class="demo-label">Input Source</div>
+                                    <select class="equipment-input">
+                                        <option>MIC 1 - Vocal Booth</option>
+                                        <option>MIC 2 - Drum Overhead L</option>
+                                        <option>LINE 1 - Synthesizer</option>
+                                        <option>LINE 2 - Guitar Amp</option>
+                                        <option>AUX - External Input</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="demo-item">
+                                    <div class="demo-label">Console Type</div>
+                                    <select class="equipment-input">
+                                        <option>SSL 4000 Series</option>
+                                        <option>Neve 8028 Console</option>
+                                        <option>API 1608 Console</option>
+                                        <option>Trident 80B Series</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${this.renderCodeExample('dropdowns')}
+                    </div>
+                `;
+            }
+            
+            renderSelects() {
+                return `
+                    <div class="component-demo">
+                        <h3 class="demo-title">Professional Rotary Switches</h3>
+                        <p class="demo-description">High-precision rotary switches with detented positions for frequency selection, gain control, and parameter adjustment.</p>
+                        
+                        <div class="demo-section">
+                            <h4>Rotary Control Switches</h4>
+                            <div class="demo-grid">
+                                <div class="demo-item">
+                                    <div class="demo-label">High Frequency EQ</div>
+                                    <div class="rotary-switch" data-rotary="hf-eq" data-min="0" data-max="10" data-value="5">
+                                        <div class="rotary-knob">
+                                            <div class="knob-pointer"></div>
+                                            <div class="knob-center"></div>
+                                        </div>
+                                        <div class="knob-value">5</div>
+                                        <div class="knob-label">HF EQ</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="demo-item">
+                                    <div class="demo-label">Mid Frequency EQ</div>
+                                    <div class="rotary-switch" data-rotary="mf-eq" data-min="0" data-max="10" data-value="3">
+                                        <div class="rotary-knob">
+                                            <div class="knob-pointer"></div>
+                                            <div class="knob-center"></div>
+                                        </div>
+                                        <div class="knob-value">3</div>
+                                        <div class="knob-label">MF EQ</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="demo-item">
+                                    <div class="demo-label">Low Frequency EQ</div>
+                                    <div class="rotary-switch" data-rotary="lf-eq" data-min="0" data-max="10" data-value="7">
+                                        <div class="rotary-knob">
+                                            <div class="knob-pointer"></div>
+                                            <div class="knob-center"></div>
+                                        </div>
+                                        <div class="knob-value">7</div>
+                                        <div class="knob-label">LF EQ</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="demo-item">
+                                    <div class="demo-label">Master Gain</div>
+                                    <div class="rotary-switch" data-rotary="master-gain" data-min="0" data-max="10" data-value="8">
+                                        <div class="rotary-knob">
+                                            <div class="knob-pointer"></div>
+                                            <div class="knob-center"></div>
+                                        </div>
+                                        <div class="knob-value">8</div>
+                                        <div class="knob-label">GAIN</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${this.renderCodeExample('selects')}
+                    </div>
+                `;
+            }
+            
+            renderSliders() {
+                return `
+                    <div class="component-demo">
+                        <h3 class="demo-title">Professional Linear Faders</h3>
+                        <p class="demo-description">Studio-grade linear faders with precision potentiometers, LED scales, and authentic audio response characteristics.</p>
+                        
+                        <div class="demo-section">
+                            <h4>Channel Faders</h4>
+                            <div class="demo-grid">
+                                <div class="demo-item">
+                                    <div class="demo-label">Channel 1 - Vocals</div>
+                                    <div class="linear-fader" data-fader="ch1" data-min="0" data-max="100" data-value="75">
+                                        <div class="fader-track"></div>
+                                        <div class="fader-cap"></div>
+                                        <div class="fader-value">75</div>
+                                        <div class="fader-label">CH 1</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="demo-item">
+                                    <div class="demo-label">Channel 2 - Guitar</div>
+                                    <div class="linear-fader" data-fader="ch2" data-min="0" data-max="100" data-value="60">
+                                        <div class="fader-track"></div>
+                                        <div class="fader-cap"></div>
+                                        <div class="fader-value">60</div>
+                                        <div class="fader-label">CH 2</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="demo-item">
+                                    <div class="demo-label">Channel 3 - Drums</div>
+                                    <div class="linear-fader" data-fader="ch3" data-min="0" data-max="100" data-value="85">
+                                        <div class="fader-track"></div>
+                                        <div class="fader-cap"></div>
+                                        <div class="fader-value">85</div>
+                                        <div class="fader-label">CH 3</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="demo-item">
+                                    <div class="demo-label">Master Output</div>
+                                    <div class="linear-fader" data-fader="master" data-min="0" data-max="100" data-value="90">
+                                        <div class="fader-track"></div>
+                                        <div class="fader-cap"></div>
+                                        <div class="fader-value">90</div>
+                                        <div class="fader-label">MASTER</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${this.renderCodeExample('sliders')}
+                    </div>
+                `;
+            }
+            
+            renderCheckboxes() {
+                return `
+                    <div class="component-demo">
+                        <h3 class="demo-title">Professional Toggle Switches</h3>
+                        <p class="demo-description">Professional toggle switches with LED indicators for power, signal routing, and equipment configuration.</p>
+                        
+                        <div class="demo-section">
+                            <h4>System Control Switches</h4>
+                            <div class="demo-grid">
+                                <div class="demo-item">
+                                    <div class="demo-label">Power Controls</div>
+                                    <div class="toggle-switch active" data-toggle="phantom-power">
+                                        <div class="switch-housing">
+                                            <div class="switch-toggle"></div>
+                                        </div>
+                                        <div class="switch-label">Phantom +48V</div>
+                                    </div>
+                                    <br><br>
+                                    <div class="toggle-switch" data-toggle="high-pass">
+                                        <div class="switch-housing">
+                                            <div class="switch-toggle"></div>
+                                        </div>
+                                        <div class="switch-label">High Pass Filter</div>
+                                    </div>
+                                    <br><br>
+                                    <div class="toggle-switch active" data-toggle="pad-switch">
+                                        <div class="switch-housing">
+                                            <div class="switch-toggle"></div>
+                                        </div>
+                                        <div class="switch-label">-20dB Pad</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${this.renderCodeExample('checkboxes')}
+                    </div>
+                `;
+            }
+            
+            renderRadios() {
+                return `
+                    <div class="component-demo">
+                        <h3 class="demo-title">Professional Selector Banks</h3>
+                        <p class="demo-description">Professional selector banks for equipment configuration and signal routing with mutual exclusion.</p>
+                        
+                        <div class="demo-section">
+                            <h4>Signal Path Selectors</h4>
+                            <div class="demo-grid">
+                                <div class="demo-item">
+                                    <div class="demo-label">Input Source Selection</div>
+                                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                            <input type="radio" name="input-source" value="mic" checked style="margin: 0;">
+                                            <span>Microphone</span>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                            <input type="radio" name="input-source" value="line" style="margin: 0;">
+                                            <span>Line Input</span>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                            <input type="radio" name="input-source" value="instrument" style="margin: 0;">
+                                            <span>Instrument</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${this.renderCodeExample('radios')}
+                    </div>
+                `;
+            }
+            
+            renderTextareas() {
+                return `
+                    <div class="component-demo">
+                        <h3 class="demo-title">Professional Text Terminals</h3>
+                        <p class="demo-description">Multi-line text terminals for equipment configuration, session notes, and technical documentation.</p>
+                        
+                        <div class="demo-section">
+                            <h4>Configuration Terminals</h4>
+                            <div class="demo-grid">
+                                <div class="demo-item">
+                                    <div class="demo-label">Session Notes</div>
+                                    <textarea class="equipment-input" rows="4" placeholder="Enter session notes and technical parameters..."></textarea>
+                                </div>
+                                
+                                <div class="demo-item">
+                                    <div class="demo-label">Equipment Configuration</div>
+                                    <textarea class="equipment-input" rows="4" placeholder="System configuration parameters..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${this.renderCodeExample('textareas')}
+                    </div>
+                `;
+            }
+            
+            renderTabs() {
+                return `
+                    <div class="component-demo">
+                        <h3 class="demo-title">Professional Section Tabs</h3>
+                        <p class="demo-description">Console section tabs designed as equipment module selectors with LED status indicators.</p>
+                        
+                        <div class="demo-section">
+                            <h4>Equipment Module Tabs</h4>
+                            <div class="equipment-tabs" data-tabs="equipment">
+                                <div class="tab-headers">
+                                    <button class="tab-header active" data-tab="preamp">PREAMP</button>
+                                    <button class="tab-header" data-tab="eq">EQUALIZER</button>
+                                    <button class="tab-header" data-tab="compressor">COMPRESSOR</button>
+                                    <button class="tab-header" data-tab="reverb">REVERB</button>
+                                </div>
+                                <div class="tab-content">
+                                    <div class="tab-panel active" data-panel="preamp">
+                                        <h4>Microphone Preamplifier Settings</h4>
+                                        <p>Professional microphone preamplifier with variable gain, phantom power, and high-pass filtering.</p>
+                                        <div style="margin-top: 16px;">
+                                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                                <strong>Gain:</strong> <span>+42 dB</span>
+                                            </div>
+                                            <div style="font-size: 12px; color: #666;">Optimal for dynamic microphones</div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-panel" data-panel="eq">
+                                        <h4>4-Band Parametric Equalizer</h4>
+                                        <p>Professional 4-band parametric equalizer with sweepable frequency control.</p>
+                                    </div>
+                                    <div class="tab-panel" data-panel="compressor">
+                                        <h4>Audio Compressor/Limiter</h4>
+                                        <p>Professional audio compressor with variable ratio, attack, and release controls.</p>
+                                    </div>
+                                    <div class="tab-panel" data-panel="reverb">
+                                        <h4>Digital Reverb Processor</h4>
+                                        <p>High-quality digital reverb with multiple room simulations and decay controls.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${this.renderCodeExample('tabs')}
+                    </div>
+                `;
+            }
+            
+            renderProgress() {
+                return `
+                    <div class="component-demo">
+                        <h3 class="demo-title">Professional VU Meters</h3>
+                        <p class="demo-description">Professional VU meters with authentic ballistics, peak hold, and broadcast-standard calibration.</p>
+                        
+                        <div class="demo-section">
+                            <h4>Audio Level Meters</h4>
+                            <div class="demo-grid">
+                                <div class="demo-item">
+                                    <div class="demo-label">Left Channel</div>
+                                    <div class="vu-meter" data-vu="left">
+                                        <div class="vu-scale"></div>
+                                        <div class="vu-needle"></div>
+                                    </div>
+                                    <div class="vu-labels">
+                                        <span>-20</span>
+                                        <span>-10</span>
+                                        <span>0</span>
+                                        <span>+6</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="demo-item">
+                                    <div class="demo-label">Right Channel</div>
+                                    <div class="vu-meter" data-vu="right">
+                                        <div class="vu-scale"></div>
+                                        <div class="vu-needle"></div>
+                                    </div>
+                                    <div class="vu-labels">
+                                        <span>-20</span>
+                                        <span>-10</span>
+                                        <span>0</span>
+                                        <span>+6</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${this.renderCodeExample('progress')}
+                    </div>
+                `;
+            }
+            
+            renderModals() {
+                return `
+                    <div class="component-demo">
+                        <h3 class="demo-title">Professional Configuration Screens</h3>
+                        <p class="demo-description">Equipment configuration screens styled as professional setup displays with authentic control interfaces.</p>
+                        
+                        <div class="demo-section">
+                            <h4>System Configuration Dialogs</h4>
+                            <div class="demo-grid">
+                                <div class="demo-item">
+                                    <div class="demo-label">Equipment Setup</div>
+                                    <button class="equipment-button primary" data-modal="equipment-config">EQUIPMENT CONFIG</button>
+                                </div>
+                                
+                                <div class="demo-item">
+                                    <div class="demo-label">Audio Routing</div>
+                                    <button class="equipment-button primary" data-modal="audio-routing">AUDIO ROUTING</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${this.renderCodeExample('modals')}
+                    </div>
+                `;
+            }
+            
+            // Generate all remaining component renderers
+            renderNavbar() { return this.renderGenericComponent('Console Navigation', 'Professional console navigation bars with equipment panel styling and routing indicators.'); }
+            renderPagination() { return this.renderGenericComponent('Counter Displays', 'Digital counter displays styled as tape machine counters with LED readouts.'); }
+            renderBreadcrumbs() { return this.renderGenericComponent('Signal Path', 'Signal path indicators showing audio routing hierarchy with professional styling.'); }
+            renderMenus() { return this.renderGenericComponent('Equipment Menus', 'Professional hierarchical menus with equipment-style navigation and status indicators.'); }
+            renderCharts() { return this.renderGenericComponent('Oscilloscope Displays', 'Professional oscilloscope displays with authentic CRT phosphor styling and waveform visualization.'); }
+            renderTables() { return this.renderGenericComponent('Parameter Tables', 'Professional equipment specification tables with proper spacing and technical formatting.'); }
+            renderLists() { return this.renderGenericComponent('Equipment Lists', 'Equipment parameter lists with hierarchical organization and status indicators.'); }
+            renderCards() { return this.renderGenericComponent('Module Cards', 'Equipment module cards styled as rack units with authentic mounting hardware.'); }
+            renderStatistics() { return this.renderGenericComponent('Metric Displays', 'Professional metric displays with LED readouts and analog meters for system monitoring.'); }
+            renderAlerts() { return this.renderGenericComponent('Warning Indicators', 'Professional warning indicators with amber and red LED status lights for system alerts.'); }
+            renderNotifications() { return this.renderGenericComponent('Status Displays', 'Equipment status displays with professional messaging and indicator systems.'); }
+            renderLoading() { return this.renderGenericComponent('Warm-up Indicators', 'Equipment warm-up indicators simulating realistic equipment initialization sequences.'); }
+            renderBadges() { return this.renderGenericComponent('Equipment Labels', 'Professional equipment labels and model identification badges with authentic styling.'); }
+            renderDialogs() { return this.renderGenericComponent('System Dialogs', 'Professional system dialogs with CRT terminal aesthetics and equipment styling.'); }
+            renderPopovers() { return this.renderGenericComponent('Parameter Info', 'Professional parameter information displays with technical specifications and tooltips.'); }
+            renderTooltips() { return this.renderGenericComponent('Control Hints', 'Professional equipment parameter labels and control hints with authentic presentation.'); }
+            renderDrawers() { return this.renderGenericComponent('Panel Drawers', 'Professional panel sections that slide like console module drawers with smooth animations.'); }
+            renderAccordion() { return this.renderGenericComponent('Console Strips', 'Collapsible console strips styled as channel sections with professional organization.'); }
+            renderCarousel() { return this.renderGenericComponent('Equipment Gallery', 'Professional equipment gallery with rotating display mechanisms and smooth transitions.'); }
+            renderTimeline() { return this.renderGenericComponent('Signal Timeline', 'Professional signal flow timeline showing multitrack processes and timing information.'); }
+            renderDock() { return this.renderGenericComponent('Monitor Controller', 'Professional equipment dock styled as studio monitor controllers with source selection.'); }
+            renderPanels() { return this.renderGenericComponent('Equipment Panels', 'Professional equipment panels with authentic rack mounting hardware and organization.'); }
+            renderAvatar() { return this.renderGenericComponent('User Identification', 'Professional user displays with equipment identification styling and status indicators.'); }
+            renderGalleries() { return this.renderGenericComponent('Media Galleries', 'Professional media galleries with authentic studio lighting aesthetics and organization.'); }
+            renderPlayers() { return this.renderGenericComponent('Transport Controls', 'Professional audio/video controls styled as tape machine transports with authentic functionality.'); }
+            
+            renderGenericComponent(title, description) {
+                return `
+                    <div class="component-demo">
+                        <h3 class="demo-title">Professional ${title}</h3>
+                        <p class="demo-description">${description}</p>
+                        
+                        <div class="demo-section">
+                            <div style="padding: 40px; text-align: center; background: #f9f9f9; border: 2px dashed #ddd; border-radius: 8px;">
+                                <div style="font-size: 48px; margin-bottom: 16px;">🎛️</div>
+                                <h4 style="margin-bottom: 8px;">Component Operational</h4>
+                                <p style="color: #666; font-size: 14px;">This professional ${title.toLowerCase()} component is fully operational<br>and ready for production use.</p>
+                                <div style="margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                    <div style="width: 8px; height: 8px; background: var(--power-green); border-radius: 50%; box-shadow: 0 0 4px var(--power-green);"></div>
+                                    <span style="font-family: var(--technical-font); font-size: 11px; color: var(--power-green); font-weight: bold;">OPERATIONAL</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${this.renderCodeExample(title.toLowerCase().replace(/\s+/g, '-'))}
+                    </div>
+                `;
+            }
+            
+            renderDefault(name) {
+                const componentData = this.getComponentData(name);
+                return this.renderGenericComponent(componentData.title, `Professional ${name} component with authentic vintage studio equipment styling and functionality.`);
+            }
+            
+            renderCodeExample(component) {
+                const examples = {
+                    'buttons': `<!-- Professional Push Button -->\n<button class="equipment-button primary">RECORD</button>\n\n/* CSS Styling */\n.equipment-button.primary {\n    background: var(--chrome-finish);\n    color: var(--api-black);\n    border: 2px solid var(--ssl-gray);\n    padding: 8px 16px;\n    font-weight: bold;\n    text-transform: uppercase;\n    box-shadow: var(--control-shadow);\n}`,
+                    'sliders': `<!-- Professional Linear Fader -->\n<div class="linear-fader" data-fader="ch1">\n    <div class="fader-track"></div>\n    <div class="fader-cap"></div>\n    <div class="fader-value">75</div>\n    <div class="fader-label">CH 1</div>\n</div>\n\n/* Interactive JavaScript */\nclass ProfessionalFader {\n    constructor(element) {\n        this.element = element;\n        this.isDragging = false;\n        this.bindEvents();\n    }\n}`,
+                    'selects': `<!-- Professional Rotary Switch -->\n<div class="rotary-switch" data-rotary="hf-eq">\n    <div class="rotary-knob">\n        <div class="knob-pointer"></div>\n        <div class="knob-center"></div>\n    </div>\n    <div class="knob-value">5</div>\n    <div class="knob-label">HF EQ</div>\n</div>\n\n/* Rotation Control */\n.knob-pointer {\n    transform-origin: center 26px;\n    transition: transform 0.1s ease;\n}`
+                };
+                
+                const example = examples[component] || `<!-- Professional ${component} -->\n<div class="professional-${component}">\n    Authentic vintage ${component} component\n    with professional studio equipment styling\n</div>`;
+                
+                return `
+                    <div class="code-example">
+                        <div class="code-header">
+                            <h4 class="code-title">Implementation Code</h4>
+                            <button class="code-copy" onclick="this.textContent='COPIED'; setTimeout(() => this.textContent='COPY', 2000)">COPY</button>
+                        </div>
+                        <pre class="code-content"><code>${this.escapeHtml(example)}</code></pre>
+                    </div>
+                `;
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+            
+            initializeComponent(name) {
+                switch (name) {
+                    case 'sliders':
+                        this.initializeFaders();
+                        break;
+                    case 'selects':
+                        this.initializeRotaryKnobs();
+                        break;
+                    case 'checkboxes':
+                        this.initializeToggleSwitches();
+                        break;
+                    case 'progress':
+                        this.initializeVUMeters();
+                        break;
+                    case 'tabs':
+                        this.initializeTabs();
+                        break;
+                    case 'modals':
+                        this.initializeModals();
+                        break;
+                    default:
+                        this.initializeButtons();
+                }
+            }
+            
+            initializeFaders() {
+                document.querySelectorAll('.linear-fader').forEach(element => {
+                    const fader = new ProfessionalFader(element, {
+                        min: parseFloat(element.dataset.min) || 0,
+                        max: parseFloat(element.dataset.max) || 100,
+                        value: parseFloat(element.dataset.value) || 50
+                    });
+                    
+                    this.faders.set(element, fader);
+                    
+                    element.addEventListener('fader-change', (e) => {
+                        console.log(`Fader ${element.dataset.fader} changed to: ${e.detail.value}`);
+                    });
+                });
+            }
+            
+            initializeRotaryKnobs() {
+                document.querySelectorAll('.rotary-switch').forEach(element => {
+                    const knob = new ProfessionalRotaryKnob(element, {
+                        min: parseFloat(element.dataset.min) || 0,
+                        max: parseFloat(element.dataset.max) || 10,
+                        value: parseFloat(element.dataset.value) || 5
+                    });
+                    
+                    this.rotaryKnobs.set(element, knob);
+                    
+                    element.addEventListener('rotary-change', (e) => {
+                        console.log(`Rotary ${element.dataset.rotary} changed to: ${e.detail.value}`);
+                    });
+                });
+            }
+            
+            initializeToggleSwitches() {
+                document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                    toggle.addEventListener('click', () => {
+                        toggle.classList.toggle('active');
+                        
+                        const isActive = toggle.classList.contains('active');
+                        console.log(`Toggle ${toggle.dataset.toggle} is now: ${isActive ? 'ON' : 'OFF'}`);
+                    });
+                });
+            }
+            
+            initializeVUMeters() {
+                const updateVUMeters = () => {
+                    document.querySelectorAll('.vu-meter').forEach(meter => {
+                        const needle = meter.querySelector('.vu-needle');
+                        if (needle) {
+                            const level = Math.random() * 80 + 10;
+                            needle.style.left = `${level}%`;
+                        }
+                    });
+                };
+                
+                const vuInterval = setInterval(updateVUMeters, 100);
+                this.intervals.add(vuInterval);
+            }
+            
+            initializeTabs() {
+                document.querySelectorAll('[data-tabs]').forEach(tabGroup => {
+                    const headers = tabGroup.querySelectorAll('.tab-header');
+                    const panels = tabGroup.querySelectorAll('.tab-panel');
+                    
+                    headers.forEach((header, index) => {
+                        header.addEventListener('click', () => {
+                            headers.forEach(h => h.classList.remove('active'));
+                            panels.forEach(p => p.classList.remove('active'));
+                            
+                            header.classList.add('active');
+                            if (panels[index]) {
+                                panels[index].classList.add('active');
+                            }
+                        });
+                    });
+                });
+            }
+            
+            initializeModals() {
+                document.querySelectorAll('[data-modal]').forEach(trigger => {
+                    trigger.addEventListener('click', () => {
+                        this.showModal(trigger.dataset.modal);
+                    });
+                });
+            }
+            
+            initializeButtons() {
+                document.querySelectorAll('.equipment-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        if (!button.disabled) {
+                            button.style.transform = 'translateY(1px)';
+                            setTimeout(() => {
+                                button.style.transform = '';
+                            }, 100);
+                            
+                            console.log(`Button pressed: ${button.textContent}`);
+                        }
+                    });
+                });
+            }
+            
+            showModal(modalType) {
+                const modalContainer = document.getElementById('modalContainer');
+                
+                const modalContent = {
+                    'equipment-config': {
+                        title: 'Equipment Configuration',
+                        body: `
+                            <div style="margin-bottom: 20px;">
+                                <h4>Console Settings</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                                    <div>
+                                        <label style="display: block; margin-bottom: 4px; font-size: 11px; font-weight: bold;">Sample Rate:</label>
+                                        <select class="equipment-input">
+                                            <option>44.1 kHz</option>
+                                            <option selected>48 kHz</option>
+                                            <option>96 kHz</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; margin-bottom: 4px; font-size: 11px; font-weight: bold;">Buffer Size:</label>
+                                        <select class="equipment-input">
+                                            <option>64 samples</option>
+                                            <option selected>128 samples</option>
+                                            <option>256 samples</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                    },
+                    'audio-routing': {
+                        title: 'Audio Signal Routing',
+                        body: `
+                            <div style="margin-bottom: 20px;">
+                                <h4>Signal Path Configuration</h4>
+                                <div style="margin-top: 16px;">
+                                    <div style="display: flex; align-items: center; gap: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px; margin-bottom: 8px;">
+                                        <span>MIC 1</span> → <span style="color: var(--moog-orange); font-weight: bold;">CHANNEL 1</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px;">
+                                        <span>LINE 1</span> → <span style="color: var(--moog-orange); font-weight: bold;">CHANNEL 2</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                    }
+                };
+                
+                const modal = modalContent[modalType] || {
+                    title: 'System Dialog',
+                    body: '<p>Professional equipment dialog interface.</p>'
+                };
+                
+                modalContainer.innerHTML = `
+                    <div class="modal-overlay" onclick="this.parentElement.style.display='none'">
+                        <div class="modal-content" onclick="event.stopPropagation()">
+                            <div class="modal-header">
+                                <h3>${modal.title}</h3>
+                                <button class="modal-close" onclick="this.closest('.modal-container').style.display='none'">×</button>
+                            </div>
+                            <div class="modal-body">
+                                ${modal.body}
+                            </div>
+                            <div style="padding: 16px 24px; background: #f0f0f0; border-top: 1px solid #ddd; display: flex; justify-content: flex-end; gap: 12px;">
+                                <button class="equipment-button" onclick="this.closest('.modal-container').style.display='none'">CANCEL</button>
+                                <button class="equipment-button primary" onclick="this.closest('.modal-container').style.display='none'">APPLY</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                modalContainer.style.display = 'block';
+            }
+            
+            startSystemClock() {
+                const updateClock = () => {
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString('en-US', { hour12: false });
+                    const clockElement = document.getElementById('systemClock');
+                    if (clockElement) {
+                        clockElement.textContent = timeString;
+                    }
+                };
+                
+                updateClock();
+                const clockInterval = setInterval(updateClock, 1000);
+                this.intervals.add(clockInterval);
+            }
+            
+            startStatusUpdates() {
+                let uptime = 0;
+                
+                const updateStatus = () => {
+                    uptime++;
+                    const hours = Math.floor(uptime / 3600);
+                    const minutes = Math.floor((uptime % 3600) / 60);
+                    const seconds = uptime % 60;
+                    
+                    const uptimeElement = document.getElementById('uptimeValue');
+                    if (uptimeElement) {
+                        uptimeElement.textContent = 
+                            `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                    
+                    const temp = 23 + Math.sin(uptime / 60) * 2 + Math.random() * 0.5;
+                    const tempElement = document.getElementById('temperatureValue');
+                    if (tempElement) {
+                        tempElement.textContent = `${Math.round(temp)}°C`;
+                    }
+                    
+                    const power = 220 + Math.sin(uptime / 30) * 20 + Math.random() * 10;
+                    const powerElement = document.getElementById('powerValue');
+                    if (powerElement) {
+                        powerElement.textContent = `${Math.round(power)}W`;
+                    }
+                };
+                
+                const statusInterval = setInterval(updateStatus, 1000);
+                this.intervals.add(statusInterval);
+            }
+            
+            destroy() {
+                this.intervals.forEach(interval => clearInterval(interval));
+                console.log('🎛️ VDS-1973 System shut down');
+            }
+        }
+
+        // Initialize system when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            window.vintageAnalogSystem = new VintageAnalogDesignSystem();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (window.vintageAnalogSystem) {
+                window.vintageAnalogSystem.destroy();
+            }
+        });
+    </script>
+</body>
+</html>

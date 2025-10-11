@@ -298,8 +298,8 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
                         <Card
                             key={`${output.requestId}-${index}`}
                             className={`cursor-pointer transition-all hover:shadow-md ${selectedOutput?.requestId === output.requestId
-                                    ? "ring-2 ring-blue-500"
-                                    : ""
+                                ? "ring-2 ring-blue-500"
+                                : ""
                                 }`}
                             onClick={() => setSelectedOutput(selectedOutput?.requestId === output.requestId ? null : output)}
                         >

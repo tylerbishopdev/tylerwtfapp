@@ -400,28 +400,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                             {selectedModel.category}
                         </Badge>
                     </div>
-                    <div className="flex gap-2">
-                        {schema.documentationUrl && (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => window.open(schema.documentationUrl, "_blank")}
-                            >
-                                <ExternalLink className="w-4 h-4 mr-1" />
-                                Docs
-                            </Button>
-                        )}
-                        {schema.playgroundUrl && (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => window.open(schema.playgroundUrl, "_blank")}
-                            >
-                                <ExternalLink className="w-4 h-4 mr-1" />
-                                Playground
-                            </Button>
-                        )}
-                    </div>
+
                 </div>
 
                 {/* Status */}

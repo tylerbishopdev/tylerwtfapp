@@ -7,7 +7,7 @@
 - fal-ai/flux-pro/kontext/max/text-to-image
 - fal-ai/recraft/v3/text-to-image
 
-****Referance / trained media models****
+****Reference / trained media models****
 
 - fal-ai/flux-lora
 - fal-ai/flux-lora/image-to-image

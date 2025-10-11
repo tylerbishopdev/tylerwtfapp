@@ -1,13 +1,27 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+/* Custom Font */
+@font-face {
+  font-family: "Ndot 47";
+  src: url("/fonts/ndot-47-inspired-by-nothing.otf.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Medium.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--satoshi-font);
+  --font-mono: var(--technical-font);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -41,82 +55,248 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --font-serif: var(--technical-font);
+  --radius: 0.25rem;
+  --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
+  --tracking-tight: calc(var(--tracking-normal) - 0.025em);
+  --tracking-wide: calc(var(--tracking-normal) + 0.025em);
+  --tracking-wider: calc(var(--tracking-normal) + 0.05em);
+  --tracking-widest: calc(var(--tracking-normal) + 0.1em);
+  --tracking-normal: var(--tracking-normal);
+  --shadow-2xl: var(--equipment-shadow);
+  --shadow-xl: var(--equipment-shadow);
+  --shadow-lg: var(--control-shadow);
+  --shadow-md: var(--control-shadow);
+  --shadow: var(--control-shadow);
+  --shadow-sm: var(--inset-shadow);
+  --shadow-xs: var(--inset-shadow);
+  --shadow-2xs: var(--inset-shadow);
+  --spacing: var(--spacing);
+  --letter-spacing: var(--letter-spacing);
+  --shadow-offset-y: var(--shadow-offset-y);
+  --shadow-offset-x: var(--shadow-offset-x);
+  --shadow-spread: var(--shadow-spread);
+  --shadow-blur: var(--shadow-blur);
+  --shadow-opacity: var(--shadow-opacity);
+  --color-shadow-color: var(--shadow-color);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  /* Vintage Equipment Colors */
+  --color-ssl-gray: var(--ssl-gray);
+  --color-neve-champagne: var(--neve-champagne);
+  --color-api-black: var(--api-black);
+  --color-studer-blue: var(--studer-blue);
+  --color-moog-orange: var(--moog-orange);
+  --color-neve-brown: var(--neve-brown);
+  --color-power-green: var(--power-green);
+  --color-signal-orange: var(--signal-orange);
+  --color-peak-red: var(--peak-red);
+  --color-ready-blue: var(--ready-blue);
+  --color-warning-amber: var(--warning-amber);
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.21 0.006 285.885);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.705 0.015 286.067);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.21 0.006 285.885);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.705 0.015 286.067);
-}
+  /* Authentic Equipment Colors */
+  --ssl-gray: #6b6b6b;
+  --neve-champagne: #d4c5a0;
+  --api-black: #2c2c2c;
+  --studer-blue: #4682b4;
+  --moog-orange: #ff6b35;
+  --neve-brown: #8b4513;
+  --power-green: #32cd32;
+  --signal-orange: #ff8c00;
+  --peak-red: #ff0000;
+  --ready-blue: #1e90ff;
+  --warning-amber: #ffb000;
 
-.dark {
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.92 0.004 286.32);
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.552 0.016 285.938);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.552 0.016 285.938);
+  /* Material Textures */
+  --brushed-aluminum: linear-gradient(
+    135deg,
+    #f0f0f0 0%,
+    #c0c0c0 50%,
+    #a0a0a0 100%
+  );
+  --anodized-black: linear-gradient(
+    135deg,
+    #2c2c2c 0%,
+    #1a1a1a 50%,
+    #000000 100%
+  );
+  --chrome-finish: linear-gradient(
+    135deg,
+    #f8f8f8 0%,
+    #e8e8e8 25%,
+    #f0f0f0 50%,
+    #e0e0e0 75%,
+    #f5f5f5 100%
+  );
+
+  /* Typography */
+  --equipment-font: "Ndot 47", "Arial", "Helvetica", sans-serif;
+  --technical-font: "Ndot 47", "Monaco", "Consolas", "Courier New", monospace;
+
+  /* Shadows */
+  --equipment-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --control-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --inset-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* Tailwind Color Mapping */
+  --background: oklch(0.77 0.03 293.44);
+  --foreground: oklch(0.27 0.01 294.94);
+  --card: oklch(0.4 0.04 292.56);
+  --card-foreground: oklch(0.17 0 0);
+  --popover: oklch(0.95 0 0);
+  --popover-foreground: oklch(0.17 0 0);
+  --primary: oklch(0.73 0.14 19.92); /* Maps to moog-orange */
+  --primary-foreground: oklch(0 0 0);
+  --secondary: oklch(0.77 0.15 46.51); /* Maps to neve-champagne */
+  --secondary-foreground: oklch(0.17 0 0);
+  --muted: oklch(0.36 0.01 285.7); /* Maps to ssl-gray */
+  --muted-foreground: oklch(0.8 0.03 69.37);
+  --accent: oklch(0.77 0.09 223.71); /* Maps to studer-blue */
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.7 0.11 11.81); /* Maps to peak-red */
+  --destructive-foreground: oklch(0.37 0.05 19.53);
+  --border: oklch(0.4 0 0);
+  --input: oklch(0.8 0 0);
+  --ring: oklch(0.71 0.08 18.46);
+  --radius: 0.25rem;
+  --chart-1: oklch(0.6 0.2 25);
+  --chart-2: oklch(0.82 0.07 222.79);
+  --chart-3: oklch(0.74 0.12 55.33);
+  --chart-4: oklch(0.67 0.11 12.93);
+  --chart-5: oklch(0.57 0.06 19);
+  --sidebar: oklch(0.69 0 17.24);
+  --sidebar-foreground: oklch(0.71 0.13 20.95);
+  --sidebar-primary: oklch(0.69 0.2 22.98);
+  --sidebar-primary-foreground: oklch(0.89 0.06 18.33);
+  --sidebar-accent: oklch(0.72 0.08 48);
+  --sidebar-accent-foreground: oklch(0.43 0.02 18.15);
+  --sidebar-border: oklch(0.65 0.11 20.68);
+  --sidebar-ring: oklch(0.6 0.2 25);
+  --destructive-foreground: oklch(1 0 0);
+  --shadow-color: #000000;
+  --shadow-opacity: 0.3;
+  --shadow-blur: 16px;
+  --shadow-spread: -2px;
+  --shadow-offset-x: 0px;
+  --shadow-offset-y: 4px;
+  --letter-spacing: 0.5px;
+  --spacing: 0.25rem;
+  --tracking-normal: 0.05em;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    box-sizing: border-box;
   }
+
   body {
     @apply bg-background text-foreground;
+    font-family: var(--equipment-font);
+    background: linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 100%);
+    letter-spacing: var(--tracking-normal);
+    user-select: none;
+  }
+
+  /* Vintage Scrollbar */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--anodized-black);
+    border: 1px solid #333;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--chrome-finish);
+    border: 1px solid #666;
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--ssl-gray);
+  }
+}
+
+/* Vintage Component Utilities */
+@layer utilities {
+  .vintage-shadow {
+    box-shadow: var(--equipment-shadow);
+  }
+
+  .vintage-control-shadow {
+    box-shadow: var(--control-shadow);
+  }
+
+  .vintage-inset-shadow {
+    box-shadow: var(--inset-shadow);
+  }
+
+  .vintage-brushed-aluminum {
+    background: var(--brushed-aluminum);
+  }
+
+  .vintage-anodized-black {
+    background: var(--anodized-black);
+  }
+
+  .vintage-chrome-finish {
+    background: var(--chrome-finish);
+  }
+
+  .vintage-font-technical {
+    font-family: var(--technical-font);
+  }
+
+  .vintage-font-equipment {
+    font-family: var(--equipment-font);
+  }
+
+  /* Nixie Glow Animation */
+  @keyframes nixie-glow {
+    0% {
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3),
+        0 0 8px rgba(255, 107, 53, 0.6);
+    }
+    100% {
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3),
+        0 0 12px rgba(255, 107, 53, 0.8);
+    }
+  }
+
+  /* Shimmer Animation for Skeleton */
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .nixie-glow {
+    animation: nixie-glow 3s ease-in-out infinite alternate;
+  }
+
+  /* Active indicators */
+  .indicator-active {
+    position: relative;
+  }
+
+  .indicator-active::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    animation: nixie-glow 3s ease-in-out infinite alternate;
+  }
+
+  /* Vintage Button Active States */
+  @layer components {
+    .vintage-button-active {
+      transform: translateY(1px);
+    }
   }
 }
