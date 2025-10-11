@@ -1,4 +1,4 @@
-****Image generation****
+\***\*Image generation\*\***
 
 - fal-ai/ideogram/v3
 - fal-ai/imagen4/preview/fast
@@ -7,7 +7,7 @@
 - fal-ai/flux-pro/kontext/max/text-to-image
 - fal-ai/recraft/v3/text-to-image
 
-****Reference / trained media models****
+\***\*Reference / trained media models\*\***
 
 - fal-ai/flux-lora
 - fal-ai/flux-lora/image-to-image
@@ -17,7 +17,7 @@
 - fal-ai/wan-pro/image-to-video
 - fal-ai/flux-pro/kontext/max/multi
 
-****Video models****
+\***\*Video models\*\***
 
 - fal-ai/sora-2/text-to-video/pro
 - fal-ai/sora-2/image-to-video/pro
@@ -30,26 +30,26 @@
 - fal-ai/wan/v2.2-a14b/image-to-video
 - fal-ai/wan-effects
 
-****Avatar models****
+\***\*Avatar models\*\***
 
 - fal-ai/ai-avatar/single-text
 - fal-ai/bytedance/seedream/v4/edit
 - fal-ai/kling-video/v2.1/master/image-to-video
 
-****3D assets generation****
+\***\*3D assets generation\*\***
 
 - fal-ai/hyper3d/rodin/v2
 - tripo3d/tripo/v2.5/image-to-3d
 - sonauto/v2/text-to-music
 - fal-ai/pixverse/sound-effects
 
-****Audio Generation****
+\***\*Audio Generation\*\***
 
 - fal-ai/playai/tts/dialog
 - fal-ai/chatterbox/speech-to-speech
 - fal-ai/minimax-music/v1.5
 
-****Subject Training Models****
+\***\*Subject Training Models\*\***
 
 - fal-ai/flux-lora-portrait-trainer
 - fal-ai/flux-lora-fast-training
@@ -58,7 +58,7 @@
 - fal-ai/recraft/v3/create-style
 - fal-ai/dia-tts/voice-clone
 
-****Utility models****
+\***\*Utility models\*\***
 
 - fal-ai/lucidflux
 - fal-ai/ideogram/v3/replace-background
