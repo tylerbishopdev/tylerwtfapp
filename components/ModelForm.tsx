@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Send, ExternalLink } from "lucide-react";
+import { Loader2, Send, ExternalLink, Plus, Trash2 } from "lucide-react";
+import { LoraOption } from "@/lib/fal-utils";
 // Simple toast implementation
 const toast = {
     success: (message: string) => console.log('Success:', message),
@@ -54,6 +55,21 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
     const [submitting, setSubmitting] = useState(false);
     const [requestId, setRequestId] = useState<string | null>(null);
     const [status, setStatus] = useState<string | null>(null);
+    const [loraOptions, setLoraOptions] = useState<LoraOption[]>([]);
+
+    // Load Lora options on component mount
+    useEffect(() => {
+        fetch('/api/lora-options')
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.success) {
+                    setLoraOptions(data.loraOptions);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching Lora options:', error);
+            });
+    }, []);
 
     // Fetch schema when model changes
     useEffect(() => {
@@ -77,8 +93,9 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                     const properties = data.inputSchema?.properties || {};
 
                     Object.entries(properties).forEach(([key, prop]) => {
-                        if (prop.default !== undefined) {
-                            initialData[key] = prop.default;
+                        const propTyped = prop as SchemaProperty;
+                        if (propTyped.default !== undefined) {
+                            initialData[key] = propTyped.default;
                         }
                     });
 
@@ -101,6 +118,30 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
             ...prev,
             [key]: value,
         }));
+    };
+
+    const handleLoraSelection = (loraName: string) => {
+        const selectedLora = loraOptions.find(option => option.name === loraName);
+        if (selectedLora) {
+            const currentLoras = formData.loras || [];
+            // Add the selected Lora with default scale of 1
+            const newLoras = [...currentLoras, { path: selectedLora.url, scale: 1 }];
+            handleInputChange('loras', newLoras);
+        }
+    };
+
+    const removeLora = (index: number) => {
+        const currentLoras = formData.loras || [];
+        const newLoras = currentLoras.filter((_: any, i: number) => i !== index);
+        handleInputChange('loras', newLoras);
+    };
+
+    const updateLoraScale = (index: number, scale: number) => {
+        const currentLoras = formData.loras || [];
+        const newLoras = currentLoras.map((lora: any, i: number) =>
+            i === index ? { ...lora, scale } : lora
+        );
+        handleInputChange('loras', newLoras);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -183,9 +224,102 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
         poll();
     };
 
+    const renderLoraInput = (key: string, property: SchemaProperty) => {
+        const isRequired = schema?.inputSchema?.required?.includes(key) || false;
+        const currentLoras = formData.loras || [];
+
+        return (
+            <div key={key} className="space-y-4">
+                <Label htmlFor={key}>
+                    {property.title || key}
+                    {isRequired && <span className="text-destructive ml-1">*</span>}
+                </Label>
+
+                {/* Lora Selection Dropdown */}
+                <div className="space-y-2">
+                    <Label className="text-sm font-medium">Select LoRA:</Label>
+                    <Select onValueChange={handleLoraSelection}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Choose a LoRA model..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {loraOptions.map((option) => (
+                                <SelectItem key={option.name} value={option.name}>
+                                    <div className="flex flex-col">
+                                        <span>{option.name}</span>
+                                        {option.subjectReference && (
+                                            <span className="text-xs text-muted-foreground">
+                                                Subject: {option.subjectReference}
+                                            </span>
+                                        )}
+                                    </div>
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {/* Selected LoRAs */}
+                {currentLoras.length > 0 && (
+                    <div className="space-y-2">
+                        <Label className="text-sm font-medium">Selected LoRAs:</Label>
+                        <div className="space-y-2">
+                            {currentLoras.map((lora: any, index: number) => (
+                                <div key={index} className="flex items-center gap-2 p-3 border rounded-lg bg-muted">
+                                    <div className="flex-1">
+                                        <div className="font-medium text-sm">
+                                            {loraOptions.find(opt => opt.url === lora.path)?.name || 'Unknown LoRA'}
+                                        </div>
+                                        <div className="text-xs text-muted-foreground truncate">
+                                            {lora.path}
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-1">
+                                            <Label className="text-xs">Scale:</Label>
+                                            <Input
+                                                type="number"
+                                                min="0"
+                                                max="4"
+                                                step="0.1"
+                                                value={lora.scale}
+                                                onChange={(e) => updateLoraScale(index, parseFloat(e.target.value) || 1)}
+                                                className="w-16 h-8 text-xs"
+                                            />
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => removeLora(index)}
+                                            className="h-8 w-8 p-0"
+                                        >
+                                            <Trash2 className="w-3 h-3" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {property.description && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {property.description}
+                    </p>
+                )}
+            </div>
+        );
+    };
+
     const renderInput = (key: string, property: SchemaProperty) => {
         const isRequired = schema?.inputSchema?.required?.includes(key) || false;
         const value = formData[key];
+
+        // Handle Lora fields specially
+        if (key === 'loras') {
+            return renderLoraInput(key, property);
+        }
 
         // Handle different input types
         if (property.enum) {
@@ -193,7 +327,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                 <div key={key} className="space-y-2">
                     <Label htmlFor={key}>
                         {property.title || key}
-                        {isRequired && <span className="text-red-500 ml-1">*</span>}
+                        {isRequired && <span className="text-destructive ml-1">*</span>}
                     </Label>
                     <Select
                         value={value || ""}
@@ -229,7 +363,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                     <div key={key} className="space-y-2">
                         <Label htmlFor={key}>
                             {property.title || key}
-                            {isRequired && <span className="text-red-500 ml-1">*</span>}
+                            {isRequired && <span className="text-destructive ml-1">*</span>}
                         </Label>
                         <Textarea
                             id={key}
@@ -239,7 +373,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                             rows={4}
                         />
                         {property.description && (
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                            <p className="text-sm text-muted-foreground">
                                 {property.description}
                             </p>
                         )}
@@ -251,7 +385,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                 <div key={key} className="space-y-2">
                     <Label htmlFor={key}>
                         {property.title || key}
-                        {isRequired && <span className="text-red-500 ml-1">*</span>}
+                        {isRequired && <span className="text-destructive ml-1">*</span>}
                     </Label>
                     <Input
                         id={key}
@@ -274,7 +408,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                 <div key={key} className="space-y-2">
                     <Label htmlFor={key}>
                         {property.title || key}
-                        {isRequired && <span className="text-red-500 ml-1">*</span>}
+                        {isRequired && <span className="text-destructive ml-1">*</span>}
                     </Label>
                     <Input
                         id={key}
@@ -291,7 +425,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                         </p>
                     )}
                     {(property.minimum !== undefined || property.maximum !== undefined) && (
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-muted-foreground">
                             Range: {property.minimum || 0} - {property.maximum || "∞"}
                         </p>
                     )}
@@ -307,11 +441,11 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                         type="checkbox"
                         checked={value || false}
                         onChange={(e) => handleInputChange(key, e.target.checked)}
-                        className="rounded border-gray-300"
+                        className="rounded border"
                     />
                     <Label htmlFor={key}>
                         {property.title || key}
-                        {isRequired && <span className="text-red-500 ml-1">*</span>}
+                        {isRequired && <span className="text-destructive ml-1">*</span>}
                     </Label>
                     {property.description && (
                         <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -327,7 +461,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
             <div key={key} className="space-y-2">
                 <Label htmlFor={key}>
                     {property.title || key}
-                    {isRequired && <span className="text-red-500 ml-1">*</span>}
+                    {isRequired && <span className="text-destructive ml-1">*</span>}
                 </Label>
                 <Input
                     id={key}
@@ -349,10 +483,10 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
             <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                     <div className="text-4xl mb-4">🎨</div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    <h3 className="text-lg font-medium text-foreground mb-2">
                         Select a Model
                     </h3>
-                    <p className="text-gray-500 dark:text-gray-400">
+                    <p className="text-muted-foreground">
                         Choose a model from the sidebar to get started
                     </p>
                 </div>
@@ -375,11 +509,11 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
         return (
             <div className="flex items-center justify-center h-full">
                 <div className="text-center">
-                    <div className="text-red-500 text-4xl mb-4">⚠️</div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    <div className="text-destructive text-4xl mb-4">⚠️</div>
+                    <h3 className="text-lg font-medium text-foreground mb-2">
                         Failed to Load Model
                     </h3>
-                    <p className="text-gray-500 dark:text-gray-400">
+                    <p className="text-muted-foreground">
                         Could not load configuration for {selectedModel.name}
                     </p>
                 </div>
@@ -390,10 +524,10 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
     return (
         <div className="h-full flex flex-col">
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+            <div className="p-4 border-b border bg-card">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        <h3 className="text-lg font-semibold text-foreground">
                             {selectedModel.name}
                         </h3>
                         <Badge variant="secondary" className="mt-1">
@@ -426,17 +560,17 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
 
                 {/* Status */}
                 {status && (
-                    <div className="mt-3 p-3 rounded-md bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                    <div className="mt-3 p-3 rounded-md bg-accent/10 border border-accent/20">
                         <div className="flex items-center gap-2">
                             {status === "IN_QUEUE" && <Loader2 className="w-4 h-4 animate-spin" />}
                             {status === "IN_PROGRESS" && <Loader2 className="w-4 h-4 animate-spin" />}
-                            {status === "COMPLETED" && <div className="w-4 h-4 bg-green-500 rounded-full" />}
-                            {status === "FAILED" && <div className="w-4 h-4 bg-red-500 rounded-full" />}
-                            <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                            {status === "COMPLETED" && <div className="w-4 h-4 bg-primary rounded-full" />}
+                            {status === "FAILED" && <div className="w-4 h-4 bg-destructive rounded-full" />}
+                            <span className="text-sm font-medium text-accent-foreground">
                                 Status: {status}
                             </span>
                             {requestId && (
-                                <span className="text-xs text-blue-700 dark:text-blue-300">
+                                <span className="text-xs text-muted-foreground">
                                     ID: {requestId.slice(-8)}
                                 </span>
                             )}

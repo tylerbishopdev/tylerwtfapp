@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Zap, Palette, Video, User, Box, Music, GraduationCap, Wrench, Layers } from "lucide-react";
+import Image from "next/image";
+
+
 
 interface Model {
     name: string;
@@ -16,15 +18,15 @@ interface ModelSidebarProps {
 }
 
 const categoryIcons: Record<string, React.ReactNode> = {
-    "Image generation": <Palette className="w-4 h-4" />,
-    "Reference / trained media models": <Zap className="w-4 h-4" />,
-    "Video models": <Video className="w-4 h-4" />,
-    "Avatar models": <User className="w-4 h-4" />,
-    "3D assets generation": <Box className="w-4 h-4" />,
-    "Audio Generation": <Music className="w-4 h-4" />,
-    "Subject Training Models": <GraduationCap className="w-4 h-4" />,
-    "Utility models": <Wrench className="w-4 h-4" />,
-    "LoRAs": <Layers className="w-4 h-4" />,
+    "Image generation": <img src="https://unpkg.com/pixelarticons@1.8.1/svg/camera.svg" className="w-4 h-4" />,
+    "Trained models": <img src="https://unpkg.com/pixelarticons@1.8.1/svg/zap.svg" className="w-4 h-4" />,
+    "Video models": <img src="https://unpkg.com/pixelarticons@1.8.1/svg/video.svg" className="w-4 h-4" />,
+    "Avatar models": <img src="https://unpkg.com/pixelarticons@1.8.1/svg/human.svg" className="w-4 h-4" />,
+    "3D assets generation": <img src="https://unpkg.com/pixelarticons@1.8.1/svg/suitcase.svg" className="w-4 h-4" />,
+    "Audio Generation": <img src="https://unpkg.com/pixelarticons@1.8.1/svg/headphone.svg" className="w-4 h-4" />,
+    "Subject Training Models": <img src="https://unpkg.com/pixelarticons@1.8.1/svg/teach.svg" className="w-4 h-4" />,
+    "Utility models": <img src="https://unpkg.com/pixelarticons@1.8.1/svg/sliders.svg" className="w-4 h-4" />,
+    "LoRAs": <img src="https://unpkg.com/pixelarticons@1.8.1/svg/users.svg" className="w-4 h-4" />,
 };
 
 export function ModelSidebar({ models, onModelSelect }: ModelSidebarProps) {
@@ -56,63 +58,67 @@ export function ModelSidebar({ models, onModelSelect }: ModelSidebarProps) {
     };
 
     return (
-        <div className="flex flex-col h-full">
-            {/* Header */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    Fal.ai Models
-                </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Select a model to generate content
-                </p>
+        <div className="flex flex-col h-full wood-grain">
+
+
+            <div className="pt-2 border-b border ">
+                <Image src="/logo.png" alt="Tylers.wtf" width={150} height={150} className="mx-auto py-3" />
+                <div className="px-3 pb-3">
+                    <p className="text-[9px] leading-none  tracking-tighter border-background border-4  text-primary/80  font-lcd  mb-1 screen-background pt-2.5 text-center mx-auto rounded-full ">
+                        Model Playgroud Supreme
+                    </p>
+                </div>
             </div>
 
+
             {/* Categories */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto ">
                 {Object.entries(modelsByCategory).map(([category, categoryModels]) => (
-                    <div key={category} className="border-b border-gray-100 dark:border-gray-700 last:border-b-0">
+                    <div key={category} className="border-b border last:border-b-0">
                         <button
                             onClick={() => toggleCategory(category)}
-                            className="w-full flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                            className="w-full flex items-center justify-between p-3 hover:bg-secondary/10 analog-button vintage-button-active transition-colors pl-3"
                         >
-                            <div className="flex items-center gap-2">
-                                {categoryIcons[category] || <Wrench className="w-4 h-4" />}
-                                <span className="font-medium text-gray-900 dark:text-white">
-                                    {category}
-                                </span>
-                                <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-600 px-2 py-1 rounded">
+                            <div className="flex items-center gap-3 justify-between">
+
+                                {categoryIcons[category] || <img src="https://unpkg.com/pixelarticons@1.8.1/svg/wrench.svg" />}
+                                <span className="text-[7px] screen-background font-lcd pt-1.5 font-bold text-primary/70 border px-1 border-border/50 rounded items-align-self w-8 mx-auto text-right">
                                     {categoryModels.length}
                                 </span>
+                                <span className="font-medium text-primary-foreground">
+                                    {category}
+                                </span>
+
                             </div>
                             {expandedCategories.has(category) ? (
-                                <ChevronDown className="w-4 h-4 text-gray-500" />
+                                <img src="https://unpkg.com/pixelarticons@1.8.1/svg/chevron-down.svg" className="w-4 h-4 text-muted" />
                             ) : (
-                                <ChevronRight className="w-4 h-4 text-gray-500" />
+                                <img src="https://unpkg.com/pixelarticons@1.8.1/svg/chevron-right.svg" className="w-4 h-4 text-muted" />
                             )}
                         </button>
 
                         {expandedCategories.has(category) && (
-                            <div className="bg-gray-50 dark:bg-gray-800">
+                            <div className="bg-black border-b border-border/50">
                                 {categoryModels.map((model) => (
                                     <button
                                         key={model.name}
                                         onClick={() => handleModelClick(model)}
-                                        className={`w-full text-left p-3 pl-8 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${selectedModel?.name === model.name
-                                                ? "bg-blue-50 dark:bg-blue-900/20 border-r-2 border-blue-500"
-                                                : ""
+                                        className={`w-full text-left p-3 pl-2 hover:bg-accent/20 bg-black transition-colors   border-b-2 border screen-background border-muted ${selectedModel?.name === model.name
+                                            ? "bg-accent   overflow-hidden scrollbar-hide"
+                                            : " "
                                             }`}
                                     >
-                                        <div className="flex flex-col">
-                                            <span className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                        <div className="flex flex-col  hover:text-accent group">
+                                            <span className="text-sm font-medium text-primary/80 truncate  group-hover:text-accent ">
                                                 {model.name}
                                             </span>
                                             {model.endpointId && (
-                                                <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                                <span className="text-xs text-muted-foreground truncate  group-hover:text-accent ">
                                                     {model.endpointId}
                                                 </span>
                                             )}
                                             {model.isLora && (
-                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 mt-1 w-fit">
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent-foreground mt-1 w-fit">
                                                     LoRA
                                                 </span>
                                             )}

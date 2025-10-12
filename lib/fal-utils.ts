@@ -86,39 +86,46 @@ export async function processAndStoreResult(
         // Handle array of media files
         processedResult[field] = await Promise.all(
           (processedResult[field] as unknown[]).map(
-            async (item: Record<string, unknown>, index: number) => {
-              if (item && typeof item === "object" && item.url) {
+            async (item: unknown, index: number) => {
+              const itemObj = item as Record<string, unknown>;
+              if (
+                itemObj &&
+                typeof itemObj === "object" &&
+                itemObj.url &&
+                typeof itemObj.url === "string"
+              ) {
                 const storedUrl = await storeMediaFile(
-                  item.url,
+                  itemObj.url,
                   modelName,
                   requestId,
                   `${field}_${index}`
                 );
                 return {
-                  ...item,
-                  original_url: item.url,
+                  ...itemObj,
+                  original_url: itemObj.url,
                   stored_url: storedUrl,
                 };
               }
-              return item;
+              return itemObj;
             }
           )
         );
       } else if (
         processedResult[field] &&
         typeof processedResult[field] === "object" &&
-        processedResult[field].url
+        (processedResult[field] as any).url &&
+        typeof (processedResult[field] as any).url === "string"
       ) {
         // Handle single media file
         const storedUrl = await storeMediaFile(
-          processedResult[field].url,
+          (processedResult[field] as any).url,
           modelName,
           requestId,
           field
         );
         processedResult[field] = {
           ...processedResult[field],
-          original_url: processedResult[field].url,
+          original_url: (processedResult[field] as any).url,
           stored_url: storedUrl,
         };
       }
@@ -142,9 +149,11 @@ export function validateModelInput(
   const required = schema.required || [];
 
   // Check required fields
-  for (const field of required) {
-    if (!(field in input)) {
-      errors.push(`Missing required field: ${field}`);
+  if (required && Array.isArray(required)) {
+    for (const field of required) {
+      if (!(field in input)) {
+        errors.push(`Missing required field: ${field}`);
+      }
     }
   }
 
@@ -182,4 +191,13 @@ export function validateModelInput(
     isValid: errors.length === 0,
     errors: errors.length > 0 ? errors : undefined,
   };
+}
+
+// Interface for predefined Lora options (client-side)
+export interface LoraOption {
+  name: string;
+  url: string;
+  isStyle?: boolean;
+  phraseReference?: string;
+  subjectReference?: string;
 }

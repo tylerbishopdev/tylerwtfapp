@@ -165,7 +165,7 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
             const audio = result.audio;
             if (audio.url || audio.stored_url) {
                 mediaElements.push(
-                    <div key="audio" className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <div key="audio" className="p-4 bg-muted rounded-lg">
                         <audio
                             src={audio.stored_url || audio.url}
                             controls
@@ -239,7 +239,7 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
             result.audios.forEach((audio: any, index: number) => {
                 if (audio.url || audio.stored_url) {
                     mediaElements.push(
-                        <div key={`audio-${index}`} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div key={`audio-${index}`} className="p-3 bg-muted rounded-lg">
                             <audio
                                 src={audio.stored_url || audio.url}
                                 controls
@@ -268,10 +268,10 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
             <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                     <div className="text-4xl mb-4">🎭</div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    <h3 className="text-lg font-medium text-foreground mb-2">
                         No Outputs Yet
                     </h3>
-                    <p className="text-gray-500 dark:text-gray-400">
+                    <p className="text-muted-foreground">
                         Generated content will appear here
                     </p>
                 </div>
@@ -282,11 +282,11 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
     return (
         <div className="h-full flex flex-col">
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <div className="p-4 border-b border bg-card">
+                <h2 className="text-lg font-semibold text-foreground">
                     Generated Outputs
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-muted-foreground">
                     {outputs.length} generation{outputs.length !== 1 ? "s" : ""}
                 </p>
             </div>
@@ -298,8 +298,8 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
                         <Card
                             key={`${output.requestId}-${index}`}
                             className={`cursor-pointer transition-all hover:shadow-md ${selectedOutput?.requestId === output.requestId
-                                    ? "ring-2 ring-blue-500"
-                                    : ""
+                                ? "ring-2 ring-accent"
+                                : ""
                                 }`}
                             onClick={() => setSelectedOutput(selectedOutput?.requestId === output.requestId ? null : output)}
                         >
@@ -310,7 +310,7 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
                                         <Badge variant="outline" className="text-xs">
                                             {output.model.split("/").pop()}
                                         </Badge>
-                                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                             <Clock className="w-3 h-3" />
                                             {formatTimestamp(output.timestamp)}
                                         </div>
@@ -320,14 +320,14 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
                                     <div className="space-y-2">
                                         {renderMedia(output.result).slice(0, 1)} {/* Show first media item */}
                                         {renderMedia(output.result).length > 1 && (
-                                            <div className="text-xs text-gray-500 text-center">
+                                            <div className="text-xs text-muted-foreground text-center">
                                                 +{renderMedia(output.result).length - 1} more
                                             </div>
                                         )}
                                     </div>
 
                                     {/* Request ID */}
-                                    <div className="text-xs text-gray-400 font-mono">
+                                    <div className="text-xs text-muted-foreground font-mono">
                                         {output.requestId.slice(-8)}
                                     </div>
                                 </div>
@@ -339,15 +339,15 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
 
             {/* Expanded view */}
             {selectedOutput && (
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
-                        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-card rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+                        <div className="p-4 border-b border">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                                    <h3 className="font-semibold text-foreground">
                                         {selectedOutput.model}
                                     </h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    <p className="text-sm text-muted-foreground">
                                         Generated {formatTimestamp(selectedOutput.timestamp)}
                                     </p>
                                 </div>
@@ -367,10 +367,10 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
 
                             {/* Raw result data */}
                             <details className="mt-4">
-                                <summary className="cursor-pointer text-sm font-medium text-gray-700 dark:text-gray-300">
+                                <summary className="cursor-pointer text-sm font-medium text-muted-foreground">
                                     Raw Result Data
                                 </summary>
-                                <pre className="mt-2 text-xs bg-gray-100 dark:bg-gray-900 p-3 rounded overflow-x-auto">
+                                <pre className="mt-2 text-xs bg-muted p-3 rounded overflow-x-auto">
                                     {JSON.stringify(selectedOutput.result, null, 2)}
                                 </pre>
                             </details>

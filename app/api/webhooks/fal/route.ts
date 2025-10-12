@@ -83,40 +83,47 @@ async function processWebhookPayload(
         // Handle array of media files
         processedPayload[field] = await Promise.all(
           (processedPayload[field] as unknown[]).map(
-            async (item: Record<string, unknown>, index: number) => {
-              if (item && typeof item === "object" && item.url) {
+            async (item: unknown, index: number) => {
+              const itemObj = item as Record<string, unknown>;
+              if (
+                itemObj &&
+                typeof itemObj === "object" &&
+                itemObj.url &&
+                typeof itemObj.url === "string"
+              ) {
                 const storedUrl = await storeWebhookMediaFile(
-                  item.url,
-                  modelName,
-                  requestId,
+                  itemObj.url as string,
+                  (modelName || "unknown") as string,
+                  (requestId || "unknown") as string,
                   `${field}_${index}`
                 );
                 return {
-                  ...item,
-                  original_url: item.url,
+                  ...itemObj,
+                  original_url: itemObj.url as string,
                   stored_url: storedUrl,
                   webhook_processed: true,
                 };
               }
-              return item;
+              return itemObj;
             }
           )
         );
       } else if (
         processedPayload[field] &&
         typeof processedPayload[field] === "object" &&
-        processedPayload[field].url
+        (processedPayload[field] as any).url &&
+        typeof (processedPayload[field] as any).url === "string"
       ) {
         // Handle single media file
         const storedUrl = await storeWebhookMediaFile(
-          processedPayload[field].url,
-          modelName,
-          requestId,
+          (processedPayload[field] as any).url as string,
+          (modelName || "unknown") as string,
+          (requestId || "unknown") as string,
           field
         );
         processedPayload[field] = {
           ...processedPayload[field],
-          original_url: processedPayload[field].url,
+          original_url: (processedPayload[field] as any).url as string,
           stored_url: storedUrl,
           webhook_processed: true,
         };

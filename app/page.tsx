@@ -52,16 +52,16 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-min-screen bg-background">
       {/* Sidebar */}
-      <div className="w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="w-80 bg-card border-r border overflow-hidden">
         <ModelSidebar models={models} onModelSelect={handleModelSelect} />
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Output Display Area */}
-        <div className="h-1/2 border-b border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="h-1/6 border-b border overflow-hidden">
           <OutputDisplay outputs={outputs} />
         </div>
 

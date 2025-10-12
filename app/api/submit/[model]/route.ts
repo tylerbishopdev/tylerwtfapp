@@ -121,11 +121,11 @@ export async function GET(
       success: true,
       request_id: requestId,
       status: status.status,
-      logs: status.logs,
-      metrics: status.metrics,
-      queue_position: status.queue_position,
+      logs: (status as any).logs,
+      metrics: (status as any).metrics,
+      queue_position: (status as any).queue_position,
       model: modelName,
-      response_url: status.response_url,
+      response_url: (status as any).response_url,
     });
   } catch (error) {
     console.error("Error getting status from Fal.ai:", error);
