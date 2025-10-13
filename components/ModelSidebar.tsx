@@ -64,7 +64,7 @@ export function ModelSidebar({ models, onModelSelect }: ModelSidebarProps) {
             <div className="pt-2 border-b border ">
                 <Image src="/logo.png" alt="Tylers.wtf" width={150} height={150} className="mx-auto py-3" />
                 <div className="px-3 pb-3">
-                    <p className="text-[9px] leading-none  tracking-tighter border-background border-4  text-primary/80  font-lcd  mb-1 screen-background pt-2.5 text-center mx-auto rounded-full ">
+                    <p className="tracking-tighter   mb-1 time-counter  text-center mx-auto  ">
                         Model Playgroud Supreme
                     </p>
                 </div>

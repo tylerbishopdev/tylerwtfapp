@@ -29,21 +29,21 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
             result.images.forEach((image: any, index: number) => {
                 if (image.url || image.stored_url) {
                     mediaElements.push(
-                        <div key={`image-${index}`} className="relative group">
+                        <div key={`image-${index}`} className="flex flex-col group">
                             <Image
                                 src={image.stored_url || image.url}
                                 alt={`Generated image ${index + 1}`}
                                 width={300}
                                 height={300}
                                 className="w-full h-48 object-cover rounded-lg"
-                                onError={(e) => {
+                                onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                                     // Fallback to original URL if stored URL fails
                                     if (image.stored_url && image.url && e.currentTarget.src !== image.url) {
                                         e.currentTarget.src = image.url;
                                     }
                                 }}
                             />
-                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <div className="flex flex-col inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg  items-center justify-center opacity-0 group-hover:opacity-100">
                                 <div className="flex gap-2">
                                     <Button
                                         size="sm"
@@ -84,7 +84,7 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
                             width={400}
                             height={400}
                             className="w-full h-64 object-cover rounded-lg"
-                            onError={(e) => {
+                            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                                 if (image.stored_url && image.url && e.currentTarget.src !== image.url) {
                                     e.currentTarget.src = image.url;
                                 }
@@ -128,7 +128,7 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
                             src={video.stored_url || video.url}
                             controls
                             className="w-full h-64 rounded-lg"
-                            onError={(e) => {
+                            onError={(e: React.SyntheticEvent<HTMLVideoElement>) => {
                                 if (video.stored_url && video.url && e.currentTarget.src !== video.url) {
                                     e.currentTarget.src = video.url;
                                 }
@@ -170,7 +170,7 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
                             src={audio.stored_url || audio.url}
                             controls
                             className="w-full"
-                            onError={(e) => {
+                            onError={(e: React.SyntheticEvent<HTMLAudioElement>) => {
                                 if (audio.stored_url && audio.url && e.currentTarget.src !== audio.url) {
                                     e.currentTarget.src = audio.url;
                                 }
@@ -214,7 +214,7 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
                                 src={video.stored_url || video.url}
                                 controls
                                 className="w-full h-48 rounded-lg"
-                                onError={(e) => {
+                                onError={(e: React.SyntheticEvent<HTMLVideoElement>) => {
                                     if (video.stored_url && video.url && e.currentTarget.src !== video.url) {
                                         e.currentTarget.src = video.url;
                                     }
@@ -244,7 +244,7 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
                                 src={audio.stored_url || audio.url}
                                 controls
                                 className="w-full"
-                                onError={(e) => {
+                                onError={(e: React.SyntheticEvent<HTMLAudioElement>) => {
                                     if (audio.stored_url && audio.url && e.currentTarget.src !== audio.url) {
                                         e.currentTarget.src = audio.url;
                                     }
@@ -267,7 +267,7 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
         return (
             <div className="flex items-center justify-center h-full">
                 <div className="text-center">
-                    <div className="text-4xl mb-4">🎭</div>
+                    <div className="text-4xl mb-4 font-mono w-12 mx-auto"><svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M5 3H3v18h18V3H5zm14 2v14H5V5h14zm-8 4H9V7H7v2h2v2h2v2H9v2H7v2h2v-2h2v-2h2v2h2v2h2v-2h-2v-2h-2v-2h2V9h2V7h-2v2h-2v2h-2V9z" fill="currentColor" /> </svg></div>
                     <h3 className="text-lg font-medium text-foreground mb-2">
                         No Outputs Yet
                     </h3>
@@ -307,7 +307,7 @@ export function OutputDisplay({ outputs }: OutputDisplayProps) {
                                 <div className="space-y-3">
                                     {/* Model and timestamp */}
                                     <div className="flex items-center justify-between">
-                                        <Badge variant="outline" className="text-xs">
+                                        <Badge variant="default" className="text-xs">
                                             {output.model.split("/").pop()}
                                         </Badge>
                                         <div className="flex items-center gap-1 text-xs text-muted-foreground">

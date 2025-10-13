@@ -52,25 +52,25 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-min-screen bg-background">
+    <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <div className="w-80 bg-card border-r border overflow-hidden">
+      <div className="w-[325px] bg-card border-r border overflow-hidden ">
         <ModelSidebar models={models} onModelSelect={handleModelSelect} />
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Output Display Area */}
-        <div className="h-1/6 border-b border overflow-hidden">
-          <OutputDisplay outputs={outputs} />
-        </div>
-
+      <div className="flex-1 flex flex-row overflow-hidden">
         {/* Form Area */}
-        <div className="h-1/2 overflow-hidden">
+        <div className="w-1/2 h-full border-r-4 border-foreground/10 overflow-hidden">
           <ModelForm
             selectedModel={selectedModel}
             onOutputGenerated={handleOutputGenerated}
           />
+        </div>
+
+        {/* Output Display Area */}
+        <div className="w-1/2 h-full overflow-hidden screen-background">
+          <OutputDisplay outputs={outputs} />
         </div>
       </div>
     </div>
