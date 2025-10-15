@@ -163,7 +163,7 @@
   --secondary-foreground: oklch(0.17 0 0);
   --muted: oklch(0.36 0.01 285.7); /* Maps to ssl-gray */
   --muted-foreground: oklch(0.8 0.03 69.37);
-  --accent: oklch(0.77 0.09 223.71); /* Maps to studer-blue */
+  --accent: oklch(0.81 0.12 195.01); /* Maps to studer-blue */
   --accent-foreground: oklch(0.33 0.09 23.98);
   --destructive: oklch(0.7 0.11 11.81); /* Maps to peak-red */
   --destructive-foreground: oklch(0.37 0.05 19.53);
@@ -524,27 +524,44 @@
     font-family: var(--font-mono), monospace;
     font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-bold);
-    color: #32cd32;
-    text-shadow: 1px 1px 3px #32cd32;
+    color: #32cacd;
+    text-shadow: 1px 1px 3px #0c6667b3;
     background: var(--color-background);
+    background-image: url("/screenback-two.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
     padding: 3px;
     border-radius: var(--radius-sm);
     border: 3px solid var(--color-border);
   }
+
   .vintage-button {
-    display: inline-flex;
-    align-items: center;
+    display: flex;
+    align-items: flex-start;
     justify-content: center;
-    padding: var(--space-8) var(--space-16);
-    border-radius: var(--radius-base);
-    font-size: var(--font-size-base);
-    font-weight: 500;
-    line-height: 1.5;
-    cursor: pointer;
-    transition: all var(--duration-normal) var(--ease-standard);
+    width: auto;
+    height: 3.9em;
+    border-radius: 5px;
+    font-family: var(--equipment-font);
+
+    margin: 0 15px;
     border: none;
-    text-decoration: none;
-    position: relative;
+    outline: none;
+    background-color: #cac0b5;
+    box-shadow: rgba(0, 0, 0, 0.377) 10px 10px 8px,
+      #f2e8e3 2px 2px 10px 0px inset, #76685c -4px -4px 1px 0px inset;
+    cursor: pointer;
+
+    transition: 0;
+  }
+  .vintage-button:active {
+    box-shadow: rgba(131, 123, 123, 0.377) 0px 0px 0px,
+      inset 0.5px 0.5px 4px #000000, #5f5955 -3.2px -3.2px 8px 0px inset;
+  }
+  .vintage-button:active .button_text {
+    transform: translateY(0.7px);
   }
 
   .time-label {
@@ -554,12 +571,12 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }
-}
 
-/* Woody Background - Custom background image utility */
-.woody {
-  background-image: url("/woodgrain.png");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  /* Woody Background - Custom background image utility */
+  .woody {
+    background-image: url("/woodgrain.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
 }

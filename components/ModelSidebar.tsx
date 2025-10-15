@@ -85,7 +85,7 @@ export function ModelSidebar({ models, onModelSelect }: ModelSidebarProps) {
                                 <span className="text-[7px] screen-background font-lcd pt-1.5 font-bold text-primary/70 border px-1 border-border/50 rounded items-align-self w-8 mx-auto text-right">
                                     {categoryModels.length}
                                 </span>
-                                <span className="font-medium text-primary-foreground">
+                                <span className="font-bold text-sm text-primary-foreground">
                                     {category}
                                 </span>
 

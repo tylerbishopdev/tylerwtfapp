@@ -506,14 +506,14 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                     </div>
                     <div className="flex gap-2 mr-4">
                         {schema.documentationUrl && (
-                            <Button
-                                variant="secondary"
+                            <button
+
                                 className="group relative inline-flex h-8 opacity-70 items-center text-xs justify-center overflow-hidden rounded-md px-2 font-medium text-foreground bg-background hover:bg-background transition-all hover:opacity-100 active:translate-y-[2px] active:shadow-none"
                                 onClick={() => window.open(schema.documentationUrl, "_blank")}
                             >
                                 <ExternalLink className="pr-2" />
                                 Model Docs
-                            </Button>
+                            </button>
                         )}
 
                     </div>
@@ -524,7 +524,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
             </div>
 
             {/* Form */}
-            <div className="flex-1 overflow-y-auto p-0">
+            <div className="flex-1 overflow-y-auto pt-2 pb-12">
                 <form onSubmit={handleSubmit} className="space-y-6">
 
                     <Card className="bg-gradient-to-br from-zinc-950 to-zinc-800/90  border-r-4 border-b-6 border-l-2">
@@ -559,20 +559,20 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                         <Button
                             type="submit"
                             disabled={submitting || !selectedModel}
-                            className="min-w-[120px] bg-secondary/80 hover:bg-secondary/20 hover:border-secondary/60 border hover:text-secondary"
+                            className=""
                             size="sm"
                         >
 
 
                             {submitting ? (
-                                <div className="flex items-center gap-2">
-                                    <span className=" flex-inline">  <Loader2 className="w-4 h-4 mr-2 animate-spin" /></span>
+                                <div className="flex items-center gap-2 time-counter">
+                                    <span className=" flex-inline">  <Loader2 className="w-4 h-5 mr-2 animate-spin" /></span>
                                     Fingers crossed, no promises...
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-2">
 
-                                    <span className="w-4 h-4 flex-inline">  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M12 1h2v8h8v4h-2v-2h-8V5h-2V3h2V1zM8 7V5h2v2H8zM6 9V7h2v2H6zm-2 2V9h2v2H4zm10 8v2h-2v2h-2v-8H2v-4h2v2h8v6h2zm2-2v2h-2v-2h2zm2-2v2h-2v-2h2zm0 0h2v-2h-2v2z" fill="currentColor" /> </svg></span>
+
                                     Generate
 
                                 </div>
