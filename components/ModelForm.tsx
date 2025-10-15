@@ -492,12 +492,12 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
     }
 
     return (
-        <div className="h-full flex flex-col mt-2 ml-2">
+        <div className="h-full flex flex-col mt-2 ml-2 ">
             {/* Header */}
-            <div className="p-0 ">
+            <div className="p-0 border-b-2 border-border">
                 <div className="flex items-center w-full justify-start gap-8">
                     <div>
-                        <h3 className=" font-semibold font-mono time-counter rounded-t-2xl border p-3 w-[460px] mx-auto text-center  text-foreground">
+                        <h3 className=" font-semibold font-mono time-counter rounded-t-2xl border p-3 w-max-[500px] w-[500px] mx-auto text-center  text-foreground">
                             {selectedModel.name}
                         </h3>
                         <div className=" text-center font-mono uppercase border px-1 text-xs bg-primary/20 text-secondary p-0.5">

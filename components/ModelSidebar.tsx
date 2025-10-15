@@ -58,13 +58,13 @@ export function ModelSidebar({ models, onModelSelect }: ModelSidebarProps) {
     };
 
     return (
-        <div className="flex flex-col h-full wood-grain">
+        <div className="flex flex-col h-full woody">
 
 
             <div className="pt-2 border-b border ">
                 <Image src="/logo.png" alt="Tylers.wtf" width={150} height={150} className="mx-auto py-3" />
-                <div className="px-3 pb-3">
-                    <p className="tracking-tighter   mb-1 time-counter  text-center mx-auto  ">
+                <div className="px-3 pb-3 border-2 border-background align-items-center pt-4 bg-background/80 mb-2">
+                    <p className="tracking-tighter   mb-1 time-counter  text-center mx-auto ">
                         Model Playgroud Supreme
                     </p>
                 </div>
@@ -74,7 +74,7 @@ export function ModelSidebar({ models, onModelSelect }: ModelSidebarProps) {
             {/* Categories */}
             <div className="flex-1 overflow-y-auto ">
                 {Object.entries(modelsByCategory).map(([category, categoryModels]) => (
-                    <div key={category} className="border-b border last:border-b-0">
+                    <div key={category} className="border-y border border-zinc-900 last:border-b-4 first:border-t-4">
                         <button
                             onClick={() => toggleCategory(category)}
                             className="w-full flex items-center justify-between p-3 hover:bg-secondary/10 analog-button vintage-button-active transition-colors pl-3"
