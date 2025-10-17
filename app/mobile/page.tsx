@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, Settings, Sparkles } from "lucide-react";
+import { ChevronDown, Settings, FlaskConical } from "lucide-react";
 import Image from "next/image";
 import { MobileModelForm } from "@/components/mobile/MobileModelForm";
 import { MobileOutputDisplay } from "@/components/mobile/MobileOutputDisplay";
+
 
 interface Model {
     name: string;
@@ -94,12 +95,12 @@ export default function MobilePage() {
             {/* Mobile Header */}
             <div className="sticky top-0 z-10 bg-card border-b border">
                 <div className="flex items-center justify-between p-4">
-                    <Image src="/logo.png" alt="Tylers.wtf" width={120} height={40} className="h-10 w-auto" />
+                    <Image src="/logo.png" alt="Tylers.wtf" width={120} height={40} className="h-24 w-auto" />
                     <Button
-                        variant="ghost"
+
                         size="lg"
                         onClick={() => setModelSelectorOpen(true)}
-                        className="text-base font-medium"
+                        className="font-mono font-bold"
                     >
                         {selectedModel ? selectedModel.name.split("/").pop() : "Select Model"}
                         <ChevronDown className="w-5 h-5 ml-2" />
@@ -108,12 +109,12 @@ export default function MobilePage() {
             </div>
 
             {/* Output Display Area */}
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden time-counter">
                 <MobileOutputDisplay outputs={outputs} />
             </div>
 
             {/* Bottom Navigation */}
-            <div className="sticky bottom-0 z-10 bg-card border-t border">
+            <div className="sticky bottom-0 z-10 bg-card/40 border-t border">
                 <div className="flex items-center gap-3 p-4">
                     <Button
                         variant="outline"
@@ -122,7 +123,7 @@ export default function MobilePage() {
                         disabled={!selectedModel}
                         className="flex-1 h-14 text-base"
                     >
-                        <Settings className="w-5 h-5 mr-2" />
+                        <Settings className="w-6 h-6 mr-1 align-middle items-center pt-0.5" />
                         Inputs
                     </Button>
                     <Button
@@ -134,7 +135,7 @@ export default function MobilePage() {
                             setInputsModalOpen(true);
                         }}
                     >
-                        <Sparkles className="w-5 h-5 mr-2" />
+                        <FlaskConical className="w-6 h-6 mr-1 align-middle items-center pt-0.5" />
                         Generate
                     </Button>
                 </div>
@@ -142,25 +143,25 @@ export default function MobilePage() {
 
             {/* Model Selection Modal */}
             <Dialog open={modelSelectorOpen} onOpenChange={setModelSelectorOpen}>
-                <DialogContent className="max-w-[95vw] max-h-[85vh] h-[85vh] p-0 gap-0">
-                    <DialogHeader className="p-4 border-b">
-                        <DialogTitle>Select Model</DialogTitle>
+                <DialogContent className="max-w-[95vw] max-h-[85vh] h-[85vh] p-0 gap-0  woody w-full border-4 border-muted shadow-background shadow-xl">
+                    <DialogHeader className="p-4 border-b w-full">
+                        <DialogTitle><span className="text-2xl font-bold time-counter px-10 mx-auto">Select Model</span></DialogTitle>
                     </DialogHeader>
                     <div className="overflow-y-auto flex-1">
                         {Object.entries(modelsByCategory).map(([category, categoryModels]) => (
-                            <div key={category} className="border-b last:border-b-0">
+                            <div key={category} className="border-b last:border-b-0 w-full flex flex-col">
                                 <button
                                     onClick={() => toggleCategory(category)}
-                                    className="w-full flex items-center justify-between p-4 hover:bg-accent/10"
+                                    className=" flex items-start justify-together p-4 hover:bg-accent/10 vintage-button w-full text-background/80 text-base font-bold text-left align-self-start"
                                 >
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex gap-3 w-full">
                                         <img
                                             src={categoryIcons[category] || "https://unpkg.com/pixelarticons@1.8.1/svg/wrench.svg"}
                                             className="w-5 h-5"
                                             alt=""
                                         />
                                         <span className="font-medium">{category}</span>
-                                        <Badge variant="secondary" className="text-xs">
+                                        <Badge variant="outline" className="text-xs border-none bg-card/80 text-muted-foreground px-2.5 py-1.5">
                                             {categoryModels.length}
                                         </Badge>
                                     </div>
@@ -170,12 +171,12 @@ export default function MobilePage() {
                                     />
                                 </button>
                                 {expandedCategories.has(category) && (
-                                    <div className="bg-muted/30">
+                                    <div className="bg-card mt-2">
                                         {categoryModels.map((model) => (
                                             <button
                                                 key={model.name}
                                                 onClick={() => handleModelSelect(model)}
-                                                className={`w-full text-left p-4 pl-12 hover:bg-accent/20 border-t ${selectedModel?.name === model.name ? "bg-accent/30" : ""
+                                                className={`w-full text-left p-4 screen-background pl-12 hover:bg-accent/20 border-t ${selectedModel?.name === model.name ? "bg-accent/30" : ""
                                                     }`}
                                             >
                                                 <div className="font-medium truncate">{model.name}</div>

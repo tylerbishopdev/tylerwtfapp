@@ -109,14 +109,14 @@
   --ssl-gray: #6b6b6b;
   --neve-champagne: #d4c5a0;
   --api-black: #2c2c2c;
-  --studer-blue: #4682b4;
+  --studer-blue: #8bcbff;
   --moog-orange: #ff6b35;
   --neve-brown: #8b4513;
   --power-green: #32cd32;
-  --signal-orange: #ff8c00;
-  --peak-red: #ff0000;
-  --ready-blue: #1e90ff;
-  --warning-amber: #ffb000;
+  --signal-orange: #fec37a;
+  --peak-red: #ff9b9b;
+  --ready-blue: #83d2ff;
+  --warning-amber: #f9d27f;
 
   /* Material Textures */
   --brushed-aluminum: linear-gradient(
@@ -168,7 +168,7 @@
   --destructive: oklch(0.7 0.11 11.81); /* Maps to peak-red */
   --destructive-foreground: oklch(0.37 0.05 19.53);
   --border: oklch(0.4 0 0);
-  --input: oklch(0.8 0 0);
+  --input: oklch(0.74 0.05 212.61);
   --ring: oklch(0.71 0.08 18.46);
   --radius: 0.25rem;
   --chart-1: oklch(0.6 0.2 25);
@@ -330,7 +330,7 @@
   .input-background {
     width: 100%;
     height: 100%;
-    background-color: #111111;
+    background-color: #48ceff;
     background-image: linear-gradient(
       32deg,
       rgba(18, 17, 17, 0.74) 30px,

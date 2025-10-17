@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Loader2, ExternalLink, Trash2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { LoraOption } from "@/lib/fal-utils";
+
 // Simple toast implementation
 const toast = {
     success: (message: string) => console.log('Success:', message),
@@ -22,9 +22,10 @@ interface Model {
     isLora: boolean;
 }
 
-interface ModelFormProps {
+interface MobileModelFormProps {
     selectedModel: Model | null;
     onOutputGenerated: (output: any) => void;
+    inModal?: boolean;
 }
 
 interface SchemaProperty {
@@ -47,13 +48,12 @@ interface ModelSchema {
     playgroundUrl?: string;
 }
 
-export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) {
+export function MobileModelForm({ selectedModel, onOutputGenerated, inModal = false }: MobileModelFormProps) {
     const [schema, setSchema] = useState<ModelSchema | null>(null);
     const [formData, setFormData] = useState<Record<string, any>>({});
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [loraOptions, setLoraOptions] = useState<LoraOption[]>([]);
-    const [showAdvanced, setShowAdvanced] = useState(false);
 
     // Load Lora options on component mount
     useEffect(() => {
@@ -122,7 +122,6 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
         const selectedLora = loraOptions.find(option => option.name === loraName);
         if (selectedLora) {
             const currentLoras = formData.loras || [];
-            // Add the selected Lora with default scale of 1
             const newLoras = [...currentLoras, { path: selectedLora.url, scale: 1 }];
             handleInputChange('loras', newLoras);
         }
@@ -182,40 +181,27 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
         }
     };
 
-    const properties = schema?.inputSchema?.properties || {};
-    const requiredFields = schema?.inputSchema?.required || [];
-
-    const requiredProperties = Object.entries(properties).filter(([key]) =>
-        requiredFields.includes(key)
-    );
-    const optionalProperties = Object.entries(properties).filter(
-        ([key]) => !requiredFields.includes(key)
-    );
-
-
     const renderLoraInput = (key: string, property: SchemaProperty) => {
         const isRequired = schema?.inputSchema?.required?.includes(key) || false;
         const currentLoras = formData.loras || [];
 
         return (
-            <div key={key} className="space-y-4">
-                <Label htmlFor={key}>
+            <div key={key} className="space-y-3">
+                <Label htmlFor={key} className="text-sm">
                     {property.title || key}
                     {isRequired && <span className="text-destructive ml-1">*</span>}
                 </Label>
 
-                {/* Lora Selection Dropdown */}
-                <div className="space-y-1">
-                    <Label className="text-xs font-medium">Select LoRA:</Label>
+                <div className="space-y-2">
                     <Select onValueChange={handleLoraSelection}>
-                        <SelectTrigger>
+                        <SelectTrigger className="h-12">
                             <SelectValue placeholder="Choose a LoRA model..." />
                         </SelectTrigger>
                         <SelectContent>
                             {loraOptions.map((option) => (
                                 <SelectItem key={option.name} value={option.name}>
                                     <div className="flex flex-col">
-                                        <span>{option.name}</span>
+                                        <span className="text-sm">{option.name}</span>
                                         {option.subjectReference && (
                                             <span className="text-xs text-muted-foreground">
                                                 Subject: {option.subjectReference}
@@ -228,52 +214,42 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                     </Select>
                 </div>
 
-                {/* Selected LoRAs */}
                 {currentLoras.length > 0 && (
-                    <div className="space-y-1">
-                        <Label className="text-xs font-medium">Selected LoRAs:</Label>
-                        <div className="space-y-1">
-                            {currentLoras.map((lora: any, index: number) => (
-                                <div key={index} className="flex items-center gap-2 p-3 border rounded-lg bg-muted">
-                                    <div className="flex-1">
-                                        <div className="font-medium text-xs">
-                                            {loraOptions.find(opt => opt.url === lora.path)?.name || 'Unknown LoRA'}
-                                        </div>
-                                        <div className="text-xs text-muted-foreground truncate">
-                                            {lora.path}
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex items-center gap-1">
-                                            <Label className="text-xs">Scale:</Label>
-                                            <Input
-                                                type="number"
-                                                min="0"
-                                                max="4"
-                                                step="0.1"
-                                                value={lora.scale}
-                                                onChange={(e) => updateLoraScale(index, parseFloat(e.target.value) || 1)}
-                                                className="w-16 h-8 text-xs"
-                                            />
-                                        </div>
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => removeLora(index)}
-                                            className="h-8 w-8 p-0"
-                                        >
-                                            <Trash2 className="w-3 h-3" />
-                                        </Button>
+                    <div className="space-y-2">
+                        {currentLoras.map((lora: any, index: number) => (
+                            <div key={index} className="flex items-center gap-2 p-3 border rounded-lg bg-muted">
+                                <div className="flex-1 min-w-0">
+                                    <div className="font-medium text-xs truncate">
+                                        {loraOptions.find(opt => opt.url === lora.path)?.name || 'Unknown LoRA'}
                                     </div>
                                 </div>
-                            ))}
-                        </div>
+                                <div className="flex items-center gap-2">
+                                    <Input
+                                        type="number"
+                                        min="0"
+                                        max="4"
+                                        step="0.1"
+                                        value={lora.scale}
+                                        onChange={(e) => updateLoraScale(index, parseFloat(e.target.value) || 1)}
+                                        className="w-16 h-9 text-xs"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => removeLora(index)}
+                                        className="h-9 w-9 p-0"
+                                    >
+                                        ✕
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 )}
 
                 {property.description && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-muted-foreground">
                         {property.description}
                     </p>
                 )}
@@ -293,8 +269,8 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
         // Handle different input types
         if (property.enum) {
             return (
-                <div key={key} className="space-y-1">
-                    <Label htmlFor={key}>
+                <div key={key} className="space-y-2">
+                    <Label htmlFor={key} className="text-sm">
                         {property.title || key}
                         {isRequired && <span className="text-destructive ml-1">*</span>}
                     </Label>
@@ -302,7 +278,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                         value={value || ""}
                         onValueChange={(val) => handleInputChange(key, val)}
                     >
-                        <SelectTrigger>
+                        <SelectTrigger className="h-12">
                             <SelectValue placeholder={`Select ${property.title || key}`} />
                         </SelectTrigger>
                         <SelectContent>
@@ -314,7 +290,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                         </SelectContent>
                     </Select>
                     {property.description && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-muted-foreground">
                             {property.description}
                         </p>
                     )}
@@ -329,8 +305,8 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
 
             if (isLongText) {
                 return (
-                    <div key={key} className="space-y-1">
-                        <Label htmlFor={key}>
+                    <div key={key} className="space-y-2">
+                        <Label htmlFor={key} className="text-sm">
                             {property.title || key}
                             {isRequired && <span className="text-destructive ml-1">*</span>}
                         </Label>
@@ -340,6 +316,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                             onChange={(e) => handleInputChange(key, e.target.value)}
                             placeholder={property.examples?.[0] || ""}
                             rows={4}
+                            className="min-h-[100px] text-base"
                         />
                         {property.description && (
                             <p className="text-xs text-muted-foreground">
@@ -351,8 +328,8 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
             }
 
             return (
-                <div key={key} className="space-y-1">
-                    <Label htmlFor={key}>
+                <div key={key} className="space-y-2">
+                    <Label htmlFor={key} className="text-sm">
                         {property.title || key}
                         {isRequired && <span className="text-destructive ml-1">*</span>}
                     </Label>
@@ -362,9 +339,10 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                         value={value || ""}
                         onChange={(e) => handleInputChange(key, e.target.value)}
                         placeholder={property.examples?.[0] || ""}
+                        className="h-12 text-base"
                     />
                     {property.description && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-muted-foreground">
                             {property.description}
                         </p>
                     )}
@@ -374,8 +352,8 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
 
         if (property.type === "number" || property.type === "integer") {
             return (
-                <div key={key} className="space-y-1">
-                    <Label htmlFor={key}>
+                <div key={key} className="space-y-2">
+                    <Label htmlFor={key} className="text-sm">
                         {property.title || key}
                         {isRequired && <span className="text-destructive ml-1">*</span>}
                     </Label>
@@ -387,9 +365,10 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                         value={value || ""}
                         onChange={(e) => handleInputChange(key, e.target.value)}
                         placeholder={property.examples?.[0] || property.default?.toString()}
+                        className="h-12 text-base"
                     />
                     {property.description && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-muted-foreground">
                             {property.description}
                         </p>
                     )}
@@ -404,7 +383,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
 
         if (property.type === "boolean") {
             return (
-                <div key={key} className="flex items-center space-x-2 text-accent">
+                <div key={key} className="flex items-center space-x-3 py-2   text-accen">
                     <input
                         id={key}
                         type="checkbox"
@@ -412,23 +391,18 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                         onChange={(e) => handleInputChange(key, e.target.checked)}
                         className="border-accent border bg-accent/30 text-accent"
                     />
-                    <Label htmlFor={key}>
+                    <Label htmlFor={key} className="text-sm">
                         {property.title || key}
                         {isRequired && <span className="text-destructive ml-1">*</span>}
                     </Label>
-                    {property.description && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {property.description}
-                        </p>
-                    )}
                 </div>
             );
         }
 
         // Default fallback
         return (
-            <div key={key} className="space-y-1">
-                <Label htmlFor={key}>
+            <div key={key} className="space-y-2">
+                <Label htmlFor={key} className="text-sm">
                     {property.title || key}
                     {isRequired && <span className="text-destructive ml-1">*</span>}
                 </Label>
@@ -437,9 +411,10 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                     type="text"
                     value={value || ""}
                     onChange={(e) => handleInputChange(key, e.target.value)}
+                    className="h-12 text-base"
                 />
                 {property.description && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-muted-foreground">
                         {property.description}
                     </p>
                 )}
@@ -449,14 +424,14 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
 
     if (!selectedModel) {
         return (
-            <div className="flex items-center justify-center h-full">
+            <div className="flex items-center justify-center h-full p-8">
                 <div className="text-center">
-                    <div className="text-4xl mb-4 w-12 mx-auto"><svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M19 4h2v2h-2V4zm-2 4V6h2v2h-2zm-2 0h2v2h-2V8zm0 0h-2V6h2v2zM3 6h8v2H3V6zm8 10H3v2h8v-2zm7 2v-2h2v-2h-2v2h-2v-2h-2v2h2v2h-2v2h2v-2h2zm0 0v2h2v-2h-2z" fill="currentColor" className="w-1/12" /> </svg></div>
-                    <h3 className="text-lg font-medium text-foreground mb-2">
+                    <div className="text-4xl mb-4">📱</div>
+                    <h3 className="text-lg font-medium mb-2">
                         Select a Model
                     </h3>
-                    <p className="text-muted-foreground">
-                        Choose a model from the sidebar to get started
+                    <p className="text-muted-foreground text-sm">
+                        Choose a model to get started
                     </p>
                 </div>
             </div>
@@ -465,10 +440,10 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-full">
+            <div className="flex items-center justify-center h-full p-8">
                 <div className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Loading model configuration...</span>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Loading...</span>
                 </div>
             </div>
         );
@@ -476,110 +451,69 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
 
     if (!schema) {
         return (
-            <div className="flex items-center justify-center h-full">
+            <div className="flex items-center justify-center h-full p-8">
                 <div className="text-center">
-                    <div className="text-destructive text-4xl mb-4">⚠️</div>
-                    <h3 className="text-lg font-medium text-foreground mb-2">
+                    <div className="text-4xl mb-4">⚠️</div>
+                    <h3 className="text-lg font-medium mb-2">
                         Failed to Load Model
                     </h3>
-                    <p className="text-muted-foreground">
-                        Could not load configuration for {selectedModel.name}
+                    <p className="text-muted-foreground text-sm">
+                        Could not load {selectedModel.name}
                     </p>
                 </div>
             </div>
         );
     }
 
+    const properties = schema?.inputSchema?.properties || {};
+    const requiredFields = schema?.inputSchema?.required || [];
+
+    const requiredProperties = Object.entries(properties).filter(([key]) =>
+        requiredFields.includes(key)
+    );
+    const optionalProperties = Object.entries(properties).filter(
+        ([key]) => !requiredFields.includes(key)
+    );
+
     return (
-        <div className="h-full flex flex-col mt-2 ml-2 ">
-            {/* Header */}
-            <div className="p-0 border-b-2 border-border">
-                <div className="flex items-center w-full justify-start gap-8">
-                    <div>
-                        <h3 className=" font-semibold font-mono time-counter rounded-t-2xl border p-3 w-max-[500px] w-[500px] mx-auto text-center  text-foreground">
-                            {selectedModel.name}
-                        </h3>
-                        <div className=" text-center font-mono uppercase border px-1 text-xs bg-primary/20 text-secondary p-0.5">
-                            {selectedModel.category}
-                        </div>
-                    </div>
-                    <div className="flex gap-2 mr-4">
-                        {schema.documentationUrl && (
-                            <button
-
-                                className="group relative inline-flex h-8 opacity-70 items-center text-xs justify-center overflow-hidden rounded-md px-2 font-medium text-foreground bg-background hover:bg-background transition-all hover:opacity-100 active:translate-y-[2px] active:shadow-none"
-                                onClick={() => window.open(schema.documentationUrl, "_blank")}
-                            >
-                                <ExternalLink className="pr-2" />
-                                Model Docs
-                            </button>
-                        )}
-
-                    </div>
+        <div className={inModal ? "p-4" : "p-4 h-full"}>
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-4">
+                    {requiredProperties.map(([key, property]) =>
+                        renderInput(key, property as SchemaProperty)
+                    )}
+                    {optionalProperties.length > 0 && (
+                        <details className="mt-4">
+                            <summary className="cursor-pointer text-sm font-medium py-2">
+                                Advanced Options
+                            </summary>
+                            <div className="space-y-4 mt-4">
+                                {optionalProperties.map(([key, property]) =>
+                                    renderInput(key, property as SchemaProperty)
+                                )}
+                            </div>
+                        </details>
+                    )}
                 </div>
 
-                {/* Status */}
-                {/* The status display is removed as per the edit hint */}
-            </div>
-
-            {/* Form */}
-            <div className="flex-1 overflow-y-auto pt-2 pb-12">
-                <form onSubmit={handleSubmit} className="space-y-6">
-
-                    <Card className="bg-gradient-to-br from-zinc-950 to-zinc-800/90  border-r-4 border-b-6 border-l-2">
-                        <CardHeader>
-                            <CardTitle className="text-base font-mono text-primary">Model Inputs</CardTitle>
-                            <CardDescription>
-                                <span className="text-xs font-mono text-muted-foreground">Configure the parameters for {selectedModel.name}</span>
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            {requiredProperties.map(([key, property]) =>
-                                renderInput(key, property as SchemaProperty)
-                            )}
-                            {showAdvanced && optionalProperties.map(([key, property]) =>
-                                renderInput(key, property as SchemaProperty)
-                            )}
-                        </CardContent>
-                        {optionalProperties.length > 0 && (
-                            <CardFooter>
-                                <Button
-                                    type="button"
-                                    variant="link"
-                                    onClick={() => setShowAdvanced(!showAdvanced)}
-                                >
-                                    {showAdvanced ? "Hide advanced options" : "Show advanced options"}
-                                </Button>
-                            </CardFooter>
-                        )}
-                    </Card>
-
-                    <div className="flex justify-end">
-                        <Button
-                            type="submit"
-                            disabled={submitting || !selectedModel}
-                            className=""
-                            size="sm"
-                        >
-
-
-                            {submitting ? (
-                                <div className="flex items-center gap-2 time-counter">
-                                    <span className=" flex-inline">  <Loader2 className="w-4 h-5 mr-2 animate-spin" /></span>
-                                    Fingers crossed, no promises...
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-2">
-
-
-                                    Generate
-
-                                </div>
-                            )}
-                        </Button>
-                    </div>
-                </form>
-            </div >
-        </div >
+                <Button
+                    type="submit"
+                    disabled={submitting || !selectedModel}
+                    className="w-full h-12 text-base"
+                    size="lg"
+                >
+                    {submitting ? (
+                        <div className="flex items-center gap-2">
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Generating...
+                        </div>
+                    ) : (
+                        "Generate"
+                    )}
+                </Button>
+            </form>
+        </div>
     );
 }
+
+
