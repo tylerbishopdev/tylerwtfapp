@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Loader2, ExternalLink, Trash2 } from "lucide-react";
+import { Loader2, ExternalLink, Trash2, Upload } from "lucide-react";
 import { LoraOption } from "@/lib/fal-utils";
 // Simple toast implementation
 const toast = {
@@ -36,6 +36,9 @@ interface SchemaProperty {
     maximum?: number;
     default?: any;
     title?: string;
+    items?: {
+        type?: string;
+    };
 }
 
 interface ModelSchema {
@@ -52,6 +55,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
     const [formData, setFormData] = useState<Record<string, any>>({});
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [loraOptions, setLoraOptions] = useState<LoraOption[]>([]);
     const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -118,6 +122,13 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
         }));
     };
 
+    const handleFileChange = (key: string, file: File | null) => {
+        setFormData((prev) => ({
+            ...prev,
+            [key]: file,
+        }));
+    };
+
     const handleLoraSelection = (loraName: string) => {
         const selectedLora = loraOptions.find(option => option.name === loraName);
         if (selectedLora) {
@@ -148,15 +159,84 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
         if (!selectedModel || !schema) return;
 
         setSubmitting(true);
+        setUploading(false);
 
         try {
+            const processedFormData = { ...formData };
+
+            // Handle single file uploads
+            const fileFields = Object.keys(processedFormData).filter(key => processedFormData[key] instanceof File);
+
+            // Handle array file uploads (keys ending with _files)
+            const arrayFileFields = Object.keys(processedFormData).filter(key =>
+                key.endsWith('_files') && Array.isArray(processedFormData[key]) && processedFormData[key].length > 0
+            );
+
+            if (fileFields.length > 0 || arrayFileFields.length > 0) {
+                setUploading(true);
+
+                // Upload single files
+                await Promise.all(fileFields.map(async (key) => {
+                    const file = processedFormData[key] as File;
+                    const uploadFormData = new FormData();
+                    uploadFormData.append("file", file);
+
+                    const response = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: uploadFormData,
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        processedFormData[key] = result.url;
+                    } else {
+                        throw new Error(`Failed to upload ${file.name}`);
+                    }
+                }));
+
+                // Upload array files
+                for (const fileFieldKey of arrayFileFields) {
+                    const files = processedFormData[fileFieldKey] as File[];
+                    const actualFieldKey = fileFieldKey.replace('_files', '');
+                    const uploadedUrls = [];
+
+                    for (const file of files) {
+                        const uploadFormData = new FormData();
+                        uploadFormData.append("file", file);
+
+                        const response = await fetch('/api/upload', {
+                            method: 'POST',
+                            body: uploadFormData,
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            uploadedUrls.push(result.url);
+                        } else {
+                            throw new Error(`Failed to upload ${file.name}`);
+                        }
+                    }
+
+                    // Merge uploaded URLs with existing URLs
+                    const existingUrls = processedFormData[actualFieldKey] || [];
+                    processedFormData[actualFieldKey] = [...existingUrls, ...uploadedUrls];
+
+                    // Remove the temporary _files field
+                    delete processedFormData[fileFieldKey];
+                }
+
+                setUploading(false);
+            }
+
             const encodedModel = encodeURIComponent(selectedModel.name);
             const response = await fetch(`/api/submit/${encodedModel}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(processedFormData),
             });
 
             const data = await response.json();
@@ -179,6 +259,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
             );
         } finally {
             setSubmitting(false);
+            setUploading(false);
         }
     };
 
@@ -273,13 +354,196 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                 )}
 
                 {property.description && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-foreground ">
                         {property.description}
                     </p>
                 )}
             </div>
         );
     };
+
+    const renderFileInput = (key: string, property: SchemaProperty) => {
+        const isRequired = schema?.inputSchema?.required?.includes(key) || false;
+        const isArray = property.type === 'array';
+
+        // Handle array fields differently
+        if (isArray) {
+            const currentUrls = formData[key] || [];
+            const pendingFiles = formData[`${key}_files`] || [];
+
+            return (
+                <div key={key} className="space-y-1">
+                    <Label htmlFor={key}>
+                        {property.title || key}
+                        {isRequired && <span className="text-destructive ml-1">*</span>}
+                    </Label>
+
+                    {/* Input for adding new URLs */}
+                    <div className="relative">
+                        <Input
+                            id={key}
+                            type="text"
+                            placeholder="Enter URL or click to upload"
+                            className="pr-24"
+                            onKeyPress={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    const input = e.target as HTMLInputElement;
+                                    if (input.value.trim()) {
+                                        handleInputChange(key, [...currentUrls, input.value.trim()]);
+                                        input.value = '';
+                                    }
+                                }
+                            }}
+                        />
+                        <div className="absolute right-1 top-1 bottom-1">
+                            <Button
+                                asChild
+                                variant="file"
+                                size="sm"
+                                className="h-full px-6"
+                            >
+                                <label htmlFor={`${key}-file-upload`} className="cursor-pointer">
+                                    <Upload className="w-4 h-4" />
+                                    <input
+                                        id={`${key}-file-upload`}
+                                        type="file"
+                                        accept="image/*,video/*,audio/*"
+                                        multiple={isArray}
+                                        onChange={(e) => {
+                                            const files = Array.from(e.target.files || []);
+                                            if (files.length > 0) {
+                                                // Store files temporarily
+                                                handleInputChange(`${key}_files`, [...pendingFiles, ...files]);
+                                            }
+                                        }}
+                                        className="sr-only"
+                                    />
+                                </label>
+                            </Button>
+                        </div>
+                    </div>
+
+                    {/* Display current URLs and pending files */}
+                    {(currentUrls.length > 0 || pendingFiles.length > 0) && (
+                        <div className="space-y-1">
+                            {currentUrls.map((url: string, index: number) => (
+                                <div key={`url-${index}`} className="text-xs text-muted-foreground flex items-center justify-between bg-muted/50 p-2 rounded">
+                                    <span className="truncate">{url}</span>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                            const newUrls = currentUrls.filter((_: string, i: number) => i !== index);
+                                            handleInputChange(key, newUrls);
+                                        }}
+                                        className="h-6 w-6 p-0"
+                                    >
+                                        <Trash2 className="w-3 h-3" />
+                                    </Button>
+                                </div>
+                            ))}
+                            {pendingFiles.map((file: File, index: number) => (
+                                <div key={`file-${index}`} className="text-xs text-muted-foreground flex items-center justify-between bg-accent/10 p-2 rounded">
+                                    <span className="flex items-center gap-1">
+                                        <Upload className="w-3 h-3" />
+                                        {file.name} (pending upload)
+                                    </span>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                            const newFiles = pendingFiles.filter((_: File, i: number) => i !== index);
+                                            handleInputChange(`${key}_files`, newFiles);
+                                        }}
+                                        className="h-6 w-6 p-0"
+                                    >
+                                        <Trash2 className="w-3 h-3" />
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {property.description && (
+                        <p className="text-xs text-foreground ">
+                            {property.description}
+                        </p>
+                    )}
+                </div>
+            );
+        }
+
+        // Handle single string fields
+        const file = formData[key] as File | undefined;
+        const currentValue = typeof formData[key] === 'string' ? formData[key] : '';
+
+        return (
+            <div key={key} className="space-y-1">
+                <Label htmlFor={key}>
+                    {property.title || key}
+                    {isRequired && <span className="text-destructive ml-1">*</span>}
+                </Label>
+                <div className="relative">
+                    <Input
+                        id={key}
+                        type="text"
+                        value={currentValue}
+                        onChange={(e) => handleInputChange(key, e.target.value)}
+                        placeholder="Enter URL or click to upload"
+                        className="pr-24"
+                    />
+                    <div className="absolute right-1 top-1 bottom-1">
+                        <Button
+                            asChild
+                            variant="ghost"
+                            size="sm"
+                            className="h-full px-3 hover:bg-accent/20"
+                        >
+                            <label htmlFor={`${key}-file-upload`} className="cursor-pointer">
+                                <Upload className="w-4 h-4" />
+                                <input
+                                    id={`${key}-file-upload`}
+                                    type="file"
+                                    accept="image/*,video/*,audio/*"
+                                    onChange={(e) => {
+                                        const selectedFile = e.target.files?.[0];
+                                        if (selectedFile) {
+                                            handleFileChange(key, selectedFile);
+                                            // Clear the text input when a file is selected
+                                            handleInputChange(key, '');
+                                        }
+                                    }}
+                                    className="sr-only"
+                                />
+                            </label>
+                        </Button>
+                    </div>
+                </div>
+                {file && (
+                    <div className="text-xs text-muted-foreground flex items-center justify-between bg-muted/50 p-2 rounded">
+                        <span className="flex items-center gap-1">
+                            <Upload className="w-3 h-3" />
+                            {file.name}
+                        </span>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleFileChange(key, null)}
+                            className="h-6 w-6 p-0"
+                        >
+                            <Trash2 className="w-3 h-3" />
+                        </Button>
+                    </div>
+                )}
+                {property.description && (
+                    <p className="text-xs text-foreground ">
+                        {property.description}
+                    </p>
+                )}
+            </div>
+        )
+    }
 
     const renderInput = (key: string, property: SchemaProperty) => {
         const isRequired = schema?.inputSchema?.required?.includes(key) || false;
@@ -288,6 +552,57 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
         // Handle Lora fields specially
         if (key === 'loras') {
             return renderLoraInput(key, property);
+        }
+
+        // More intelligent detection of media input fields
+        // Check both string fields and array fields that contain URLs
+        const isStringOrArrayOfStrings = property.type === 'string' ||
+            (property.type === 'array' && property.items?.type === 'string');
+
+        if (isStringOrArrayOfStrings) {
+            const keyLower = key.toLowerCase();
+            const descLower = property.description?.toLowerCase() || '';
+            const titleLower = property.title?.toLowerCase() || '';
+
+            // Check if this is a media/file input field
+            const isMediaField =
+                // Check field names with underscores
+                keyLower.includes('image_url') ||
+                keyLower.includes('video_url') ||
+                keyLower.includes('audio_url') ||
+                keyLower.includes('file_url') ||
+                keyLower.includes('mask_url') ||
+                // Check field names without underscores
+                keyLower.includes('imageurl') ||
+                keyLower.includes('videourl') ||
+                keyLower.includes('audiourl') ||
+                keyLower.includes('fileurl') ||
+                // Check generic patterns
+                (keyLower.includes('url') && (keyLower.includes('image') || keyLower.includes('video') || keyLower.includes('audio') || keyLower.includes('mask'))) ||
+                keyLower === 'image' ||
+                keyLower === 'video' ||
+                keyLower === 'audio' ||
+                keyLower === 'file' ||
+                // Check description content
+                descLower.includes('url of') ||
+                descLower.includes('image url') ||
+                descLower.includes('video url') ||
+                descLower.includes('audio url') ||
+                descLower.includes('file url') ||
+                descLower.includes('upload') ||
+                descLower.includes('image') && descLower.includes('jpeg') ||
+                descLower.includes('png') ||
+                descLower.includes('webp') ||
+                // Check title content
+                titleLower.includes('image') && titleLower.includes('url') ||
+                titleLower.includes('video') && titleLower.includes('url') ||
+                titleLower.includes('audio') && titleLower.includes('url') ||
+                titleLower.includes('file') && titleLower.includes('url') ||
+                titleLower.includes('mask') && titleLower.includes('url');
+
+            if (isMediaField) {
+                return renderFileInput(key, property);
+            }
         }
 
         // Handle different input types
@@ -314,7 +629,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                         </SelectContent>
                     </Select>
                     {property.description && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-foreground ">
                             {property.description}
                         </p>
                     )}
@@ -364,7 +679,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                         placeholder={property.examples?.[0] || ""}
                     />
                     {property.description && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-foreground ">
                             {property.description}
                         </p>
                     )}
@@ -389,7 +704,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                         placeholder={property.examples?.[0] || property.default?.toString()}
                     />
                     {property.description && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-foreground ">
                             {property.description}
                         </p>
                     )}
@@ -417,7 +732,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                         {isRequired && <span className="text-destructive ml-1">*</span>}
                     </Label>
                     {property.description && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-foreground ">
                             {property.description}
                         </p>
                     )}
@@ -439,7 +754,7 @@ export function ModelForm({ selectedModel, onOutputGenerated }: ModelFormProps) 
                     onChange={(e) => handleInputChange(key, e.target.value)}
                 />
                 {property.description && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-foreground ">
                         {property.description}
                     </p>
                 )}

@@ -18,94 +18,70 @@ function parseLoraReferences(): LoraOption[] {
     const content = fs.readFileSync(filePath, "utf-8");
 
     const loraOptions: LoraOption[] = [];
+    const loraSection =
+      content.split("LoRas—")[1] || content.split("LoRas—")[1];
 
-    // Split by lines and look for Lora entries
-    const lines = content.split("\n");
-    let inLoraSection = false;
+    if (!loraSection) {
+      return [];
+    }
 
-    for (const line of lines) {
-      const trimmedLine = line.trim();
+    // Process each LoRa entry
+    const entries = loraSection.trim().split(/-\s*“/);
+    for (const entry of entries) {
+      if (entry.trim() === "") continue;
 
-      // Check if we're entering the LoRAs section
-      if (trimmedLine === "LoRAs—" || trimmedLine === "LoRas—") {
-        inLoraSection = true;
-        continue;
-      }
+      const lines = entry.trim().split("\n");
+      const nameMatch = lines[0].match(/([^”]+)”/);
+      if (!nameMatch) continue;
 
-      // Check if we've left the LoRAs section
-      if (inLoraSection && trimmedLine === "---") {
-        break;
-      }
+      const name = nameMatch[1];
+      let url = "";
+      let isStyle = false;
+      let phraseReference = "";
+      let subjectReference = "";
 
-      // Parse Lora entries
-      if (
-        inLoraSection &&
-        trimmedLine.startsWith('- "') &&
-        trimmedLine.includes('":')
-      ) {
-        // Extract name and URL
-        const match = trimmedLine.match(/- "([^"]+)":\s*\[?([^\]]+)\]?/);
-        if (match) {
-          const name = match[1];
-          let url = match[2];
-
-          // Clean up URL if it has extra formatting
-          url = url.replace(/\[|\]/g, "").trim();
-
-          // Check for additional properties in subsequent lines
-          const currentIndex = lines.indexOf(line);
-          const nextLine =
-            currentIndex + 1 < lines.length
-              ? lines[currentIndex + 1].trim()
-              : "";
-          const nextNextLine =
-            currentIndex + 2 < lines.length
-              ? lines[currentIndex + 2].trim()
-              : "";
-
-          let isStyle = false;
-          let phraseReference = "";
-          let subjectReference = "";
-
-          if (
-            nextLine.includes('Is style="true"') ||
-            nextLine.includes("Is style=")
-          ) {
-            isStyle = true;
-          }
-
-          if (
-            nextLine.includes("phrade reference") ||
-            nextLine.includes("phrase reference")
-          ) {
-            const phraseMatch = nextLine.match(
-              /phrade reference\s*=\s*"([^"]+)"/
-            );
-            if (phraseMatch) {
-              phraseReference = phraseMatch[1];
-            }
-          }
-
-          if (
-            nextLine.includes("Subject reference") ||
-            nextNextLine.includes("Subject reference")
-          ) {
-            const subjectMatch =
-              nextLine.match(/Subject reference name\s*=\s*"([^"]+)"/) ||
-              nextNextLine.match(/Subject reference name\s*=\s*"([^"]+)"/);
-            if (subjectMatch) {
-              subjectReference = subjectMatch[1];
-            }
-          }
-
-          loraOptions.push({
-            name,
-            url,
-            isStyle,
-            phraseReference,
-            subjectReference,
-          });
+      // Extract URL and properties
+      const urlMatch = lines[0].match(/\[([^\]]+)\]/);
+      if (urlMatch) {
+        url = urlMatch[1];
+      } else {
+        const simpleUrlMatch = lines[0].match(/:\s*(https.+)/);
+        if (simpleUrlMatch) {
+          url = simpleUrlMatch[1].trim();
         }
+      }
+
+      // Extract other properties from subsequent lines
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line.includes("Is style")) {
+          isStyle = line.includes("true");
+        }
+        if (
+          line.includes("phrade reference") ||
+          line.includes("phrase reference")
+        ) {
+          const refMatch = line.match(/=\s*”([^”]+)”/);
+          if (refMatch) {
+            phraseReference = refMatch[1];
+          }
+        }
+        if (line.includes("Subject reference")) {
+          const refMatch = line.match(/=\s*“([^”]+)”/);
+          if (refMatch) {
+            subjectReference = refMatch[1];
+          }
+        }
+      }
+
+      if (name && url) {
+        loraOptions.push({
+          name,
+          url,
+          isStyle,
+          phraseReference,
+          subjectReference,
+        });
       }
     }
 

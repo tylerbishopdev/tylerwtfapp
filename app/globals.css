@@ -519,6 +519,22 @@
   .neon-glow {
     animation: neon-pulse 2s ease-in-out infinite;
   }
+  .analog-background {
+    font-family: var(--font-mono), monospace;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+
+    text-shadow: 1px 1px 3px #0c6667b3;
+    background: var(--color-background);
+    background-image: url("/screenback-two.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    padding: 3px;
+    border-radius: var(--radius-sm);
+    border: 3px solid var(--color-border);
+  }
 
   .time-counter {
     font-family: var(--font-mono), monospace;
