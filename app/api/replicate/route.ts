@@ -41,27 +41,64 @@ export async function POST(request: NextRequest) {
     if (body.extra_lora) input.extra_lora = body.extra_lora;
     if (body.extra_lora_scale) input.extra_lora_scale = body.extra_lora_scale;
 
-    // Use the models endpoint for the trained model
-    const response = await fetch(
-      "https://api.replicate.com/v1/models/tylerbishopdev/tyler/predictions",
+    // Step 1: Get the model info to find the latest version
+    const modelInfoResponse = await fetch(
+      "https://api.replicate.com/v1/models/tylerbishopdev/tyler",
       {
-        method: "POST",
         headers: {
-          Authorization: `Bearer ${replicateToken}`,
-          "Content-Type": "application/json",
-          Prefer: "wait",
+          Authorization: `Token ${replicateToken}`,
         },
-        body: JSON.stringify({ input }),
       }
     );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Replicate API error:", errorText);
+    if (!modelInfoResponse.ok) {
+      const errorText = await modelInfoResponse.text();
+      console.error("Failed to fetch model info:", modelInfoResponse.status, errorText);
       return NextResponse.json(
         {
           success: false,
-          error: `Replicate API error: ${response.statusText}`,
+          error: `Failed to fetch model info (${modelInfoResponse.status}): ${errorText}`,
+        },
+        { status: modelInfoResponse.status }
+      );
+    }
+
+    const modelInfo = await modelInfoResponse.json();
+    const versionId = modelInfo.latest_version?.id;
+
+    if (!versionId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Could not find latest version of the model. Model may not exist or may be private.",
+        },
+        { status: 404 }
+      );
+    }
+
+    console.log("Using model version:", versionId);
+
+    // Step 2: Create prediction using /v1/predictions with the version ID
+    const response = await fetch("https://api.replicate.com/v1/predictions", {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${replicateToken}`,
+        "Content-Type": "application/json",
+        Prefer: "wait",
+      },
+      body: JSON.stringify({
+        version: versionId,
+        input,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Replicate prediction error:", response.status, errorText);
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Replicate API error (${response.status}): ${errorText}`,
         },
         { status: response.status }
       );
@@ -133,7 +170,7 @@ async function pollForCompletion(
       `https://api.replicate.com/v1/predictions/${predictionId}`,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Token ${token}`,
         },
       }
     );

@@ -205,7 +205,7 @@ const FluxLoraSkiper = () => {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: idx * 0.1 }}
-                  className="relative aspect-4/3 group rounded-xl overflow-hidden bg-muted"
+                  className="relative aspect-4/3 group rounded-xl overflow-hidden "
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -217,7 +217,7 @@ const FluxLoraSkiper = () => {
                     href={img.stored_url || img.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="absolute top-2 right-2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-2 right-2 p-2   text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <Download className="h-4 w-4" />
                   </a>
@@ -230,7 +230,7 @@ const FluxLoraSkiper = () => {
           {!isLoading && images.length === 0 && !error && (
             <TextShimmerComponent
               spread={22}
-              className="select-none text-center text-[12vw] font-semibold leading-[10vw]! tracking-tighter opacity-[0.03]"
+              className="select-none text-center text-[14vw] font-satoshi font-bold leading-[14vw]! tracking-tighter opacity-[0.13]"
             >
               TYLERS.WTF
             </TextShimmerComponent>
@@ -238,15 +238,15 @@ const FluxLoraSkiper = () => {
         </div>
 
         {/* Fixed Input Container at Bottom */}
-        <div className="w-full max-w-3xl mx-auto px-3 pb-4">
-          <div className="bg-muted/60 border-foreground/5 rounded-2xl border p-1">
+        <div className="w-full max-w-3xl mx-auto pb-14 px-6 rounded-2xl border-primary ">
+          <div className="bg-black/10 border-primary/50 rounded-2xl border p-1">
             {/* Text Input Area */}
             <div className="relative">
               <Textarea
                 value={userInput}
                 autoFocus
                 placeholder=""
-                className="max-h-32 min-h-[56px] w-full resize-none rounded-none border-none bg-transparent! p-4 text-base! leading-[1.2] shadow-none focus-visible:outline-0 focus-visible:ring-0"
+                className=" min-h-[76px] w-full rounded-t-2xl text-primary resize-none  border-none bg-primary/10 p-4 text-sm leading-[1.2] shadow-none focus-visible:outline-0 focus-visible:ring-0"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -265,7 +265,7 @@ const FluxLoraSkiper = () => {
             </div>
 
             {/* Control Buttons Row */}
-            <div className="bg-background border-muted flex justify-between rounded-2xl border p-1">
+            <div className="bg-black border-none flex justify-between rounded-2xl border py-1 px-2">
               <div className="flex items-center gap-1">
                 {/* Model Selection Dropdown */}
                 <CustomDropdownMenu
@@ -273,7 +273,7 @@ const FluxLoraSkiper = () => {
                     <button
                       className={cn(
                         BUTTON_BASE_STYLES,
-                        "flex items-center gap-2",
+                        "flex items-center gap-2 bg-red-950/30 text-primary border-primary border",
                       )}
                     >
                       {(() => {
@@ -282,7 +282,7 @@ const FluxLoraSkiper = () => {
                         );
                         const IconComponent = selectedModelData?.icon;
                         return IconComponent ? (
-                          <IconComponent className="size-4" />
+                          <IconComponent className="size-5" />
                         ) : null;
                       })()}
                       {selectedModel}
@@ -303,15 +303,15 @@ const FluxLoraSkiper = () => {
                   disabled={isLoading}
                   className={cn(
                     BUTTON_BASE_STYLES,
-                    "flex w-10 items-center justify-center p-0 transition-all ease-in-out active:scale-95",
+                    "flex w-12 h-12 items-center justify-center p-0 transition-all bg-primary/60 hover:bg-primary border border-primary/80 ease-in-out active:scale-95",
                     userInput && !isLoading && BUTTON_ACTIVE_STYLES,
-                    (!userInput || isLoading) && "cursor-not-allowed opacity-50",
+                    (!userInput || isLoading) && "cursor-not-allowed opacity-100",
                   )}
                 >
                   {isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Send className="h-4 w-4" />
+                    <Send className="h-4 w-4 text-black/80" />
                   )}
                 </button>
               </div>
@@ -339,8 +339,8 @@ function TextShimmerComponent({
   children,
   as: Component = "p",
   className,
-  duration = 2,
-  spread = 2,
+  duration = 7,
+  spread = 3,
 }: TextShimmerProps) {
   const MotionComponent = motion.create(
     Component as keyof JSX.IntrinsicElements,
@@ -354,9 +354,9 @@ function TextShimmerComponent({
     <MotionComponent
       className={cn(
         "relative inline-block bg-size-[250%_100%,auto] bg-clip-text",
-        "text-transparent [--base-color:#F0A8A1] [--base-gradient-color:#F0A2A2]",
+        "text-transparent [--base-color:#FF3B29] [--base-gradient-color:#FF8282D9]",
         "[--bg:linear-gradient(90deg,#0000_calc(50%-var(--spread)),var(--base-gradient-color),#0000_calc(50%+var(--spread)))] [background-repeat:no-repeat,padding-box]",
-        "dark:[--base-color:#E2AC90] dark:[--base-gradient-color:#FFB2B2] dark:[--bg:linear-gradient(90deg,#0000_calc(50%-var(--spread)),var(--base-gradient-color),#0000_calc(50%+var(--spread)))]",
+        "dark:[--base-color:#5A51514E] dark:[--base-gradient-color:hsl(0.98 67.03% 64.31%)] dark:[--bg:linear-gradient(90deg,#0000_calc(50%-var(--spread)),var(--base-gradient-color),#0000_calc(50%+var(--spread)))]",
         className,
       )}
       initial={{ backgroundPosition: "100% center" }}
